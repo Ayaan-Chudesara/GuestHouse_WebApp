@@ -1,0 +1,26 @@
+package com.app.guesthouse.Entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Entity
+@Data
+@Table(name = "rooms")
+public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    private String roomNo;
+
+    @NotBlank
+    private String roomType;
+
+    @ManyToOne
+    @JoinColumn(name = "guest_house_id", nullable = false) // Foreign key column
+    private GuestHouse guestHouse; // Reference to GuestHouse entity
+
+}
