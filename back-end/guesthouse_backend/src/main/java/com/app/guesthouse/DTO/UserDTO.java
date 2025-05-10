@@ -1,5 +1,6 @@
 package com.app.guesthouse.DTO;
 
+import com.app.guesthouse.Entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class UserDTO {
     private String email;
     private String password;
     private String phone;
+    private User.Role role;
 }
