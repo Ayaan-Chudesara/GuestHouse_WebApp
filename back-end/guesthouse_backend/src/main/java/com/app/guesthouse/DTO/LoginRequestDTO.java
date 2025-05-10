@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class GuestHouseDTO {
-    private Long id;
-    private String name;
-    private String location;
+@NoArgsConstructor
+public class LoginRequestDTO {
+    private String email;
+    private String password;
 }

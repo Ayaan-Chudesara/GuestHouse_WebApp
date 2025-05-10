@@ -1,0 +1,46 @@
+package com.app.guesthouse.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final byte[] SECRET_KEY = "my_secret_key".getBytes();
+    private final long EXPIRATION = 1000 * 60 * 60;
+
+    public String generateToken(String username, String role) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+    public String extractUsername(String token) {
+        return parseToken(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return parseToken(token).get("role", String.class);
+    }
+
+    public boolean isTokenValid(String token, String username) {
+        return extractUsername(token).equals(username) &&
+                !parseToken(token).getExpiration().before(new Date());
+    }
+
+    private Claims parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+}
