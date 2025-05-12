@@ -2,6 +2,7 @@ package com.app.guesthouse.DTO;
 
 import ch.qos.logback.core.status.Status;
 import com.app.guesthouse.Entity.Bed;
+import com.app.guesthouse.Entity.Booking;
 import com.app.guesthouse.Entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class BookingDTO {
     private LocalDate bookingDate;
     private Integer durationDays;
     private String purpose;
-    private Status status;
+    private Booking.Status status;
     private LocalDateTime createdAt;
 
 }

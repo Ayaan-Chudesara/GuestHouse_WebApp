@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "bookings")
 @Getter
 @Setter
-
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
 
     @Id
@@ -27,7 +28,7 @@ public class Booking {
     @JoinColumn(name = "bed_id", nullable = false)
     private Bed bed;  //references bed entity
 
-
+   
     @Column(nullable = false)
     private LocalDate bookingDate;  //date of booking
 
