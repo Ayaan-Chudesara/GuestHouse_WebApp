@@ -10,4 +10,5 @@ public interface UserService {
     UserDTO saveUser(UserDTO dto);
     void deleteUser(Long id);
     UserDTO updateUser(Long id, UserDTO dto);
+    String registerUser(UserDTO userDTO);
 }

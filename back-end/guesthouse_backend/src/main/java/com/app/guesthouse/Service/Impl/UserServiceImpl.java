@@ -92,4 +92,24 @@ public class UserServiceImpl implements UserService {
         return updatedUserDTO;
     }
 
+    public String registerUser(UserDTO dto) {
+        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+            return "Password cannot be empty.";
+        }
+
+        if (userRepo.existsByEmail(dto.getEmail())) {
+            return "Email already registered.";
+        }
+
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(dto.getRole() != null ? dto.getRole() : User.Role.USER); // default to USER
+
+        userRepo.save(user);
+        return "User registered successfully.";
+    }
+
+
 }
