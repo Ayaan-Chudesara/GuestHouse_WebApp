@@ -1,7 +1,9 @@
 package com.app.guesthouse.Controller;
 
 import com.app.guesthouse.DTO.BookingDTO;
+import com.app.guesthouse.DTO.UserDTO;
 import com.app.guesthouse.Service.AdminService;
+import com.app.guesthouse.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/allBookings")
     public ResponseEntity<List<BookingDTO>> getAllBookings() {
         try {
@@ -25,7 +30,7 @@ public class AdminController {
     }
 
     @GetMapping("/allPendingBookings")
-    public ResponseEntity<List<BookingDTO>> getAllUsers() {
+    public ResponseEntity<List<BookingDTO>> getAllPendingBookings() {
         try {
             return ResponseEntity.ok(adminService.getPendingBookings());
         } catch (Exception e) {
@@ -57,6 +62,52 @@ public class AdminController {
     public ResponseEntity<BookingDTO> updateBookingStatus(@PathVariable Long id, @PathVariable String status){
         try {
             return ResponseEntity.ok(adminService.updateBookingStatus(id, status));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/all")
+    private ResponseEntity<List<UserDTO>> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
+        try{
+            return ResponseEntity.ok(userService.getUserById(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity deleteUserById(@RequestParam Long id){
+        try{
+            userService.deleteUser(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/save")
+    private ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO dto){
+        try{
+            return ResponseEntity.ok(userService.saveUser(dto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    private ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO dto){
+        try{
+            return ResponseEntity.ok(userService.updateUser(id, dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

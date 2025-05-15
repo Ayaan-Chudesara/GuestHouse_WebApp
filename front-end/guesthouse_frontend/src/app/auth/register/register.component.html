@@ -1,0 +1,37 @@
+<div class="main" style="display:flex;">
+
+ <div class="left-panel"></div>
+
+ <div class="login-container" >
+    <div class="login-box">
+   
+         <h2>Create Account</h2>
+  <form (ngSubmit)="register()" #registerForm="ngForm">
+
+    <label>Full Name</label>
+    <input type="text" name="fullName" [(ngModel)]="fullName" required>
+
+    <label>Email</label>
+    <input type="email" name="email" [(ngModel)]="email" required>
+
+    <label>Password</label>
+    <input type="password" name="password" [(ngModel)]="password" required>
+
+    <label>Confirm Password</label>
+    <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+
+    <p *ngIf="passwordMismatch" style="color: red; font-size: 14px;">Passwords do not match</p>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p class="login-link">
+    Already have an account? <a routerLink="/auth/login">Login here</a>
+  </p>
+
+    </div>
+  </div>
+
+</div>
+
+

@@ -1,0 +1,83 @@
+.main{
+  display: flex;
+  height: 100vh;
+}
+
+.left-panel {
+  background-color: #102454;
+  flex:1;
+  height: 100%;
+}
+
+.login-container {
+  flex:1;
+  background: linear-gradient(to bottom, #102454, #0e1c40, #02030c);
+
+  
+  height: 100%;
+}
+
+
+.login-box {
+  width: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  background-color: rgba(128, 128, 128, 0.324); 
+  border-radius: 12px;
+  box-shadow: 0px 0px 10px #00000088;
+  color: #ffffff;
+}
+
+/* Heading */
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  color: #cdd3e0;
+}
+
+/* Input fields */
+.login-box input[type="email"],
+.login-box input[type="password"],
+.login-box input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+/* Submit button */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #3f51b5;
+  border: none;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #303f9f;
+  box-shadow: 0px 0px 10px #3f66ff;
+}
+
+/* Optional link or error message */
+.login-box .message {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #cccccc;
+}
+
+.login-link {
+  color: white;
+  text-decoration: none;
+  
+}
