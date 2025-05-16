@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent {
 
-   fullName = '';
+  name = '';
   email = '';
   password = '';
   confirmPassword = '';
@@ -24,7 +24,7 @@ export class RegisterComponent {
     }
 
     const user = {
-      fullName: this.fullName,
+      fullName: this.name,
       email: this.email,
       password: this.password
     };

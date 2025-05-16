@@ -1,0 +1,30 @@
+<nav class="navbar">
+  <ul class="menu">
+    <!-- Admin Menu Items -->
+    <li *ngIf="isAdmin">
+      <a routerLink="/admin/dashboard" routerLinkActive="active-link">Dashboard</a>
+    </li>
+    <li *ngIf="isAdmin">
+      <a routerLink="/admin/booking" routerLinkActive="active-link">Booking Page</a>
+    </li>
+    <li *ngIf="isAdmin">
+      <a routerLink="/admin/reservations" routerLinkActive="active-link">Reservation List</a>
+    </li>
+    <li *ngIf="isAdmin">
+      <a routerLink="/admin/pending" routerLinkActive="active-link">Pending Requests</a>
+    </li>
+
+    <!-- User Menu Items -->
+    <li *ngIf="isUser">
+      <a routerLink="/user/booking" routerLinkActive="active-link">Booking Page</a>
+    </li>
+    <li *ngIf="isUser">
+      <a routerLink="/user/my-bookings" routerLinkActive="active-link">My Bookings</a>
+    </li>
+
+    <!-- Common Logout Button -->
+    <li>
+      <div (click)="logout()">Logout</div>
+    </li>
+  </ul>
+</nav>

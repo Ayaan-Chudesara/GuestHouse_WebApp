@@ -1,0 +1,35 @@
+.navbar {
+  background: linear-gradient(to bottom, #102454, #0e1c40, #02030c);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li a,
+.menu li button {
+  color: #ffffff;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: background 0.3s ease;
+  text-decoration: none;
+}
+
+.menu li a:hover,
+.menu li button:hover {
+  /*background-color: #3f66ff20;*/
+   box-shadow: 0px 4px 2px -2px #3f66ff ;
+   
+   
+}

@@ -21,9 +21,9 @@ export class LoginComponent {
 
          const role = this.authService.getRoleFromToken(token);
 
-        if (role === 'ROLE_ADMIN') {
+        if (role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
-        } else if (role === 'ROLE_USER') {
+        } else if (role === 'USER') {
           this.router.navigate(['/user/dashboard']);
         } else {
           alert('Unknown role!');

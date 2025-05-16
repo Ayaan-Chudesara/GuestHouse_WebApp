@@ -1,0 +1,7 @@
+p {
+ /* background: linear-gradient(to bottom, #02030c, #0e1c40, #102454);*/
+  color: black;
+  min-height: 100vh;
+  padding: 40px;
+  font-size: 24px;
+}
