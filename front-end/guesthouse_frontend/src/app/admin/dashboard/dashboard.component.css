@@ -1,7 +1,45 @@
-p {
- /* background: linear-gradient(to bottom, #02030c, #0e1c40, #102454);*/
-  color: black;
-  min-height: 100vh;
+.dashboard-container {
   padding: 40px;
-  font-size: 24px;
+  color: white;
+  
+  min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.dashboard-card {
+  background: #0e1c40;
+  border: 1px solid #3f66ff40;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: left , justify;
+  font-size: 25px;
+  
+  color: #fff;
+  box-shadow: 0 0 12px #3f66ff20;
+  transition: transform 0.3s ease;
+  
+  
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px #3f66ff40;
+}
+
+.dashboard-card div{
+  text-align: center;
+  font-size: 35px;
+  font-weight: bold;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }

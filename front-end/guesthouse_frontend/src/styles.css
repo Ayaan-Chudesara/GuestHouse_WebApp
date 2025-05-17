@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+/* Reset default browser margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, #02030c, #0e1c40, #1e3a8a);
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

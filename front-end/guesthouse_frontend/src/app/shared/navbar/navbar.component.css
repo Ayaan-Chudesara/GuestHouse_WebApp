@@ -1,9 +1,10 @@
 .navbar {
-  background: linear-gradient(to bottom, #102454, #0e1c40, #02030c);
+ 
   padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  
 }
 
 .menu {
@@ -15,7 +16,8 @@
 }
 
 .menu li a,
-.menu li button {
+.menu li button ,
+.menu li div {
   color: #ffffff;
   background: none;
   border: none;
@@ -27,9 +29,11 @@
 }
 
 .menu li a:hover,
-.menu li button:hover {
+.menu li button:hover,
+.menu li div:hover {
   /*background-color: #3f66ff20;*/
    box-shadow: 0px 4px 2px -2px #3f66ff ;
    
    
 }
+

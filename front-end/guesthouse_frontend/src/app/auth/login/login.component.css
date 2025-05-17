@@ -1,39 +1,42 @@
-.main{
+.main {
   display: flex;
   height: 100vh;
+
 }
 
 .left-panel {
-  background-color: #102454;
-  flex:1;
+  
+  flex: 1;
   height: 100%;
 }
 
 .login-container {
-  flex:1;
-  background: linear-gradient(to bottom, #102454, #0e1c40, #02030c);
+  flex: 1;
+ 
+  justify-content: center;
 
-  
   height: 100%;
 }
 
 
 .login-box {
-  width: 400px;
+  width: 70%;
+  height: 55%;
   margin: 100px auto;
   padding: 40px;
-  background-color: rgba(128, 128, 128, 0.324); 
+
   border-radius: 12px;
-  box-shadow: 0px 0px 10px #00000088;
+
   color: #ffffff;
 }
 
 /* Heading */
 .login-box h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 30px;
-  font-size: 24px;
+  font-size: 30px;
   color: #cdd3e0;
+  font-family: Arial;
 }
 
 /* Input fields */
@@ -41,12 +44,20 @@
 .login-box input[type="password"] {
   width: 100%;
   padding: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   border: 1px solid #333;
   border-radius: 8px;
-  background-color: #2a2a2a;
+  background-color: #02030c;
   color: #ffffff;
   font-size: 16px;
+  opacity: 0.6;
+
+}
+
+.login-box input[type="email"]:hover,
+.login-box input[type="password"]:hover {
+
+  box-shadow: 0px 5px 4px -2px #3f66ff;
 }
 
 /* Submit button */
@@ -54,18 +65,20 @@
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  background-color: #3f51b5;
+  background-color: #02030c;
   border: none;
   color: #ffffff;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.5s ease;
 }
 
 .login-box button:hover {
-  background-color: #303f9f;
-  box-shadow: 0px 0px 10px #3f66ff;
+
+  box-shadow: 0px 5px 4px -2px #3f66ff;
 }
+
+
 
 /* Optional link or error message */
 .login-box .message {
@@ -78,5 +91,11 @@
 .register-link {
   color: white;
   text-decoration: none;
-  
+
+}
+
+a {
+  color: white;
+  text-decoration: underline;
+
 }
