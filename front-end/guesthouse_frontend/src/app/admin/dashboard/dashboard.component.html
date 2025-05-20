@@ -1,9 +1,65 @@
 <div class="dashboard-container">
-  <h1>Admin Dashboard</h1>
+  <!-- Dashboard Cards Section -->
   <div class="card-grid">
-    <div class="dashboard-card">Total Bookings: <div>120</div> </div>
-    <div class="dashboard-card">Pending Requests: <div>14</div></div>
-    <div class="dashboard-card">Approved Reservations: <div>90</div></div>
-    <div class="dashboard-card">Available Rooms: <div>26</div></div>
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Available Rooms</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ availableRooms }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Reservation</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ reservations }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Pending Request</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ pendingRequests }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Check-In</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ checkIns }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Check-Out</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ checkOuts }}</div>
+    </div>
+  </div>
+
+  <!-- Scheduler Section -->
+  <div class="separate-section">
+    <h2>Scheduler</h2>
+    <p>{{ todayMonthYear }}</p>
+    <!-- Placeholder: Can add calendar or timeline view later -->
+  </div>
+
+  <!-- Total Beds Section -->
+  <div class="separate-section">
+    <h2>Total Beds</h2>
+    <p>{{ todayDate }}</p>
+    <div class="date-inputs">
+      <input type="date" [(ngModel)]="startDate" placeholder="Start date" />
+      <input type="date" [(ngModel)]="endDate" placeholder="End date" />
+      <button (click)="getTotalBeds()">Search</button>
+    </div>
+    <div *ngIf="totalBeds !== null" class="total-beds-display">
+      Total Beds: <strong>{{ totalBeds }}</strong>
+    </div>
   </div>
 </div>

@@ -1,45 +1,100 @@
-.dashboard-container {
-  padding: 40px;
-  color: white;
-  
-  min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+:root {
+  --dark-primary: #0e1c40;
+  --dark-secondary: #102454;
+  --dark-bg: #02030c;
+  --card-glow: #3f66ff20;
+  --text-light: #e6e6e6;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 40px;
+.dashboard-container {
+  padding: 40px;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, var(--dark-secondary), var(--dark-primary), var(--dark-bg));
+  color: var(--text-light);
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
+  gap: 20px;
+  margin-bottom: 50px;
 }
 
 .dashboard-card {
-  background: #0e1c40;
-  border: 1px solid #3f66ff40;
-  border-radius: 16px;
+  background: linear-gradient(to bottom right, #102454, #0e1c40);
+  border-radius: 15px;
+  box-shadow: 0 0 10px var(--card-glow);
   padding: 20px;
-  text-align: left , justify;
-  font-size: 25px;
-  
-  color: #fff;
-  box-shadow: 0 0 12px #3f66ff20;
   transition: transform 0.3s ease;
-  
-  
 }
 
 .dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px #3f66ff40;
+  transform: translateY(-4px);
 }
 
-.dashboard-card div{
-  text-align: center;
-  font-size: 35px;
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #a0b9ff;
+}
+
+.card-body {
+  font-size: 28px;
   font-weight: bold;
-  padding-bottom: 20px;
-  padding-top: 20px;
+  color: white;
+  text-align: center;
+}
+
+/* Separate Sections */
+.separate-section {
+  background: linear-gradient(to bottom, #102454, #0e1c40);
+  box-shadow: 0 0 8px var(--card-glow);
+  border-radius: 15px;
+  padding: 25px 30px;
+  margin-bottom: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.separate-section h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.date-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.date-inputs input[type="date"] {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #0a1733;
+  color: white;
+}
+
+.date-inputs button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #3f66ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.date-inputs button:hover {
+  background-color: #608eff;
+}
+
+.total-beds-display {
+  margin-top: 10px;
+  font-weight: bold;
 }
