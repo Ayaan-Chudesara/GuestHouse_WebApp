@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 public class BookingDTO {
 
     private Long id;
-    private User user;
-    private Bed bed;
+    private User user;       // Replaces full User object
+    private Bed bed;        // Replaces full Bed object
     private LocalDate bookingDate;
     private Integer durationDays;
     private String purpose;
