@@ -7,6 +7,7 @@ import com.app.guesthouse.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class AdminController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/bookings/{id}/approve")
     public ResponseEntity<String> approveBooking(@PathVariable Long id) {
         try {
@@ -48,6 +50,7 @@ public class AdminController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/bookings/{id}/reject")
     public ResponseEntity<String> rejectBooking(@PathVariable Long id) {
         try {
@@ -95,6 +98,7 @@ public class AdminController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     private ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO dto){
         try{
@@ -104,6 +108,7 @@ public class AdminController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     private ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO dto){
         try{
