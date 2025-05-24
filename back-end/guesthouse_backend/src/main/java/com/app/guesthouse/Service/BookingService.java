@@ -1,5 +1,6 @@
 package com.app.guesthouse.Service;
 
+import com.app.guesthouse.DTO.AdminBookingRequestDTO;
 import com.app.guesthouse.DTO.BookingDTO;
 import com.app.guesthouse.Entity.Booking;
 
@@ -22,4 +23,6 @@ public interface BookingService {
     void updateStatus(Long bookingId, Booking.Status status);
 
     List<BookingDTO> getBookingsBetweenDates(LocalDate start, LocalDate end);
+
+    void createBookingAsAdmin(AdminBookingRequestDTO request);
 }

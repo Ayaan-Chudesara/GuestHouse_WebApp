@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon'; 
 import { AdminBookingComponent } from './admin/admin-booking/admin-booking.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AdminBookingComponent } from './admin/admin-booking/admin-booking.compo
     MatSelectModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

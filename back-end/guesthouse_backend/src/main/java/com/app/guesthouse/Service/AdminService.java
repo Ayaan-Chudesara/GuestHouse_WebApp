@@ -5,6 +5,7 @@ import com.app.guesthouse.Entity.Booking;
 
 import java.awt.print.Book;
 import java.util.List;
+import java.util.Map;
 
 public interface AdminService {
     List<BookingDTO> getAllBookings();
@@ -13,5 +14,8 @@ public interface AdminService {
     BookingDTO approveBooking(Long bookingId);
     List<BookingDTO> getPendingBookings();
 
+    Map<String, Object> getDashboardStats();
+    List<BookingDTO> getSchedulerData(String start, String end);
+    Integer getTotalBeds();
 
 }

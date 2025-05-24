@@ -15,4 +15,7 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookingDateBetween(LocalDate startDate, LocalDate endDate);
 
+    long countByStatus(Booking.Status status);
+
+
 }

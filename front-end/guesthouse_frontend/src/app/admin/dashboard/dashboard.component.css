@@ -98,3 +98,19 @@
   margin-top: 10px;
   font-weight: bold;
 }
+
+/* Flex container for Scheduler and Total Beds */
+.side-section-group {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+}
+
+/* Make each section smaller when side by side */
+.small-section {
+  flex: 1 1 350px;
+  max-width: 420px;
+  padding: 20px;
+}

@@ -1,5 +1,6 @@
 package com.app.guesthouse.Service.Impl;
 
+import com.app.guesthouse.DTO.AdminBookingRequestDTO;
 import com.app.guesthouse.DTO.BookingDTO;
 import com.app.guesthouse.Entity.Bed;
 import com.app.guesthouse.Entity.Booking;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,6 +112,52 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepo.findByBookingDateBetween(start, end);
         return bookings.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
+
+    public void createBookingAsAdmin(AdminBookingRequestDTO request) {
+        // 1. Check if user exists
+        User user = userRepo.findByEmail(request.getGuestEmail())
+                .orElseThrow(() -> new RuntimeException("User with this email does not exist. Please register the user first."));
+
+        // 2. Calculate duration
+        long durationDays = ChronoUnit.DAYS.between(request.getCheckInDate(), request.getCheckOutDate());
+        if (durationDays <= 0) {
+            throw new IllegalArgumentException("Check-out date must be after check-in date.");
+        }
+
+        // 3. Find available beds
+        List<Bed> availableBeds = bedRepo.findAvailableBeds(
+                request.getGuestHouseId(),
+                request.getRoomType(),
+                request.getCheckInDate(),
+                request.getCheckOutDate(),
+                request.getNumberOfBeds()
+        );
+
+        if (availableBeds.size() < request.getNumberOfBeds()) {
+            throw new RuntimeException("Not enough available beds for the selected guest house and room type.");
+        }
+
+        // 4. Book each bed
+        for (int i = 0; i < request.getNumberOfBeds(); i++) {
+            Bed bed = availableBeds.get(i);
+
+            Booking booking = new Booking();
+            booking.setUser(user);
+            booking.setBed(bed);
+            booking.setBookingDate(request.getCheckInDate());
+            booking.setDurationDays((int) durationDays);
+            booking.setPurpose(request.getPurpose());
+            booking.setStatus(Booking.Status.APPROVED); // Admin-created = auto-approved
+            booking.setCreatedAt(LocalDateTime.now());
+
+            bookingRepo.save(booking);
+
+            // Optional: mark bed as booked
+            bed.setStatus(Bed.Status.BOOKED);
+            bedRepo.save(bed);
+        }
+    }
+
 
 
     private BookingDTO convertToDTO(Booking booking) {

@@ -3,6 +3,7 @@ package com.app.guesthouse.Service.Impl;
 import com.app.guesthouse.DTO.GuestHouseDTO;
 import com.app.guesthouse.Entity.GuestHouse;
 import com.app.guesthouse.Repository.GuestHouseRepo;
+import com.app.guesthouse.Service.GuestHouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class GuesHouseServiceImpl {
+public class GuestHouseServiceImpl implements GuestHouseService {
 
     @Autowired
     private GuestHouseRepo guestHouseRepo;

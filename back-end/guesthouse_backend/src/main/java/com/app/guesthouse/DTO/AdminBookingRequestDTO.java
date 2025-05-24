@@ -1,0 +1,23 @@
+package com.app.guesthouse.DTO;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminBookingRequestDTO {
+    private String guestName;
+    private String guestEmail;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
+    private Long guestHouseId;
+    private String roomType;   // e.g., "AC", "Non-AC"
+    private int numberOfBeds;
+    private String purpose;
+}

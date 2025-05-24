@@ -1,8 +1,10 @@
 package com.app.guesthouse.Controller;
 
+import com.app.guesthouse.DTO.AdminBookingRequestDTO;
 import com.app.guesthouse.DTO.BookingDTO;
 import com.app.guesthouse.DTO.UserDTO;
 import com.app.guesthouse.Service.AdminService;
+import com.app.guesthouse.Service.BookingService;
 import com.app.guesthouse.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -20,6 +23,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping("/allBookings")
     public ResponseEntity<List<BookingDTO>> getAllBookings() {
@@ -116,6 +122,31 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/dashboard/stats")
+
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        return ResponseEntity.ok(adminService.getDashboardStats());
+    }
+
+    @GetMapping("/dashboard/scheduler")
+
+    public ResponseEntity<List<BookingDTO>> getSchedulerData(@RequestParam String start, @RequestParam String end) {
+        return ResponseEntity.ok(adminService.getSchedulerData(start, end));
+    }
+
+    @GetMapping("/dashboard/total-beds")
+
+    public ResponseEntity<Integer> getTotalBeds() {
+        return ResponseEntity.ok(adminService.getTotalBeds());
+    }
+
+
+    @PostMapping("/bookings")
+    public ResponseEntity<String> createBookingByAdmin(@RequestBody AdminBookingRequestDTO request) {
+        bookingService.createBookingAsAdmin(request);
+        return ResponseEntity.ok("Booking created successfully");
     }
 
 }

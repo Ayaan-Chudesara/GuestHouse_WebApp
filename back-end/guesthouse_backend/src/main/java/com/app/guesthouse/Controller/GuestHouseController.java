@@ -12,7 +12,7 @@ import java.util.List;
 public class GuestHouseController {
 
     @Autowired
-    private GuestHouseService guestHouseService;
+    public GuestHouseService guestHouseService;
 
     @PostMapping
     public GuestHouseDTO create(@RequestBody GuestHouseDTO dto) {
