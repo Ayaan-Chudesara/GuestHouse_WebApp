@@ -1,35 +1,35 @@
 package com.app.guesthouse.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data; // Consolidated to @Data which includes @Getter, @Setter
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Data // Includes @Getter and @Setter, so removed explicit ones
 @Table(name = "bookings")
-@Getter
-@Setter
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false ) // foreign key column and not null
+    @ManyToOne(fetch = FetchType.LAZY) // A booking is made by one user
+    @JoinColumn(name = "user_id", nullable = false) // foreign key column and not null
     private User user;  //references user entity
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY) // <--- CONFIRMED: One booking is for one specific bed
     @JoinColumn(name = "bed_id", nullable = false)
     private Bed bed;  //references bed entity
 
-
     @Column(nullable = false)
-    private LocalDate bookingDate;  //date of booking
+    private LocalDate bookingDate;  //date of booking (check-in date)
 
     @Column(nullable = false)
     private Integer durationDays; // duration of stay in days
@@ -48,6 +48,6 @@ public class Booking {
         APPROVED,
         REJECTED,
         CHECKED_IN,
-        CHECKED_OUT
+        CANCELLED, CHECKED_OUT
     }
 }

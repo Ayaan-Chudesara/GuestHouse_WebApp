@@ -1,13 +1,17 @@
 package com.app.guesthouse.Entity;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor; // Added for explicit constructors
+import lombok.AllArgsConstructor; // Added for explicit constructors
+import java.util.List; // To define one-to-many relationship
 
 @Entity
 @Data
-@Table(name = "guest_houses")
+@Table(name = "guest_houses") // Aligned with your table name
+@NoArgsConstructor
+@AllArgsConstructor
 public class GuestHouse {
 
     @Id
@@ -17,30 +21,9 @@ public class GuestHouse {
     @NotBlank
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     @NotBlank
-    private String location;
+    private String location; // Aligned with your provided field name
+
+    @OneToMany(mappedBy = "guestHouse", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Room> rooms; // A guesthouse has many rooms
 }

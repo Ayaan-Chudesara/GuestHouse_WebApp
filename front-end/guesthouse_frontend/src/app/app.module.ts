@@ -17,6 +17,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon'; 
 import { AdminBookingComponent } from './admin/admin-booking/admin-booking.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {  HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { JwtInterceptor } from './interceptors/jwt.interceptor'; 
 
 @NgModule({
   declarations: [
@@ -40,7 +43,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatIconModule,
     MatSnackBarModule
   ],
-  providers: [],
+  providers: [
+ {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true // This is crucial to allow multiple interceptors if you add more later
+    }
+
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

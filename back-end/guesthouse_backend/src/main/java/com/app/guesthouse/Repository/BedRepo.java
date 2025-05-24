@@ -30,4 +30,27 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             @Param("numberOfBeds") int numberOfBeds
     );
 
+    @Query("SELECT b FROM Bed b " +
+            "JOIN b.room r " +
+            "JOIN r.guestHouse gh " +
+            "WHERE b.status = 'AVAILABLE' " + // Only consider beds explicitly marked as AVAILABLE
+            "AND gh.id = :guestHouseId " +
+            "AND r.roomType = :roomType " +
+            "AND r.numberOfBeds >= :roomCapacity " + // Ensure room has at least the requested capacity
+            "AND b.id NOT IN (" + // Exclude beds that have overlapping active bookings
+            "   SELECT bo.bed.id FROM Booking bo " +
+            "   WHERE bo.bed.id = b.id " +
+            "   AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " + // Consider active booking statuses
+            "   AND (" + // Overlap condition:
+            "       (bo.bookingDate <= :checkOutDate AND FUNCTION('DATE_ADD', bo.bookingDate, 'DAY', bo.durationDays) > :checkInDate)" +
+            "   )" +
+            ")")
+    List<Bed> findAvailableBedsByCriteria(
+            @Param("guestHouseId") Long guestHouseId,
+            @Param("roomType") String roomType,
+            @Param("roomCapacity") Integer roomCapacity,
+            @Param("checkInDate") LocalDate checkInDate,
+            @Param("checkOutDate") LocalDate checkOutDate); // This is the end date of the search, it will be used in comparison with other bookings
+
+
 }

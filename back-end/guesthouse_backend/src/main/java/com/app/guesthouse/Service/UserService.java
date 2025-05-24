@@ -1,5 +1,6 @@
 package com.app.guesthouse.Service;
 
+import com.app.guesthouse.DTO.RegisterRequestDTO;
 import com.app.guesthouse.DTO.UserDTO;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public interface UserService {
     UserDTO saveUser(UserDTO dto);
     void deleteUser(Long id);
     UserDTO updateUser(Long id, UserDTO dto);
-    String registerUser(UserDTO userDTO);
+    String registerUser(RegisterRequestDTO registerRequest);
 }

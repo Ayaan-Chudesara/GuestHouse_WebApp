@@ -23,7 +23,7 @@ export class AdminPanelService {
     numberOfBeds: number;
     purpose: string;
   }): Observable<string> { // Backend returns a String "Booking created successfully"
-    return this.http.post<string>(`${this.apiUrl}/bookings`, requestData);
+    return this.http.post(`${this.apiUrl}/bookings`, requestData, { responseType: 'text' });
   }
 
   // Method to get all users (for possible lookup or future features)

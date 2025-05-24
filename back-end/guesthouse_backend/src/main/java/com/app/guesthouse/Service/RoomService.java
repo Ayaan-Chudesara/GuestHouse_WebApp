@@ -23,4 +23,6 @@ public interface RoomService {
 
     // ❌ Delete Room
     public void deleteRoom(Long id) ;
+
+    List<String> getDistinctRoomTypes();
 }

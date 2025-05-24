@@ -7,11 +7,11 @@ import com.app.guesthouse.Repository.BedRepo;
 import com.app.guesthouse.Repository.RoomRepo;
 import com.app.guesthouse.Service.BedService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional; // Added
 
 import java.util.List;
+import java.util.NoSuchElementException; // Added
 import java.util.stream.Collectors;
 
 @Service
@@ -27,63 +27,88 @@ public class BedServiceImpl implements BedService {
         dto.setId(bed.getId());
         dto.setBedNo(bed.getBedNo());
         dto.setStatus(bed.getStatus());
-        dto.setRoomId(bed.getRoom().getId());
-        dto.setRoomNo(bed.getRoom().getRoomNo());
+        if (bed.getRoom() != null) { // Defensive check
+            dto.setRoomId(bed.getRoom().getId());
+            dto.setRoomNo(bed.getRoom().getRoomNo());
+        }
         return dto;
     }
 
     public Bed mapToEntity(BedDTO dto) {
         Bed bed = new Bed();
-        bed.setId(dto.getId());
+        // Do NOT set ID when mapping for creation, only for update.
+        // If ID is present, it's for an update scenario.
+        if (dto.getId() != null) {
+            bed.setId(dto.getId());
+        }
         bed.setBedNo(dto.getBedNo());
         bed.setStatus(dto.getStatus());
-        Room room = roomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
-        bed.setRoom(room);
-        bed.setRoom(room);
+        if (dto.getRoomId() != null) {
+            Room room = roomRepository.findById(dto.getRoomId())
+                    .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + dto.getRoomId())); // Changed exception
+            bed.setRoom(room);
+        } else {
+            throw new IllegalArgumentException("Room ID must be provided for a bed."); // Room ID is mandatory for a bed
+        }
         return bed;
     }
 
+    @Override // Implementing BedService method
     public List<BedDTO> getAllBeds() {
         return bedRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
+    @Override // Implementing BedService method
     public BedDTO getBedById(Long id) {
         Bed bed = bedRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bed not found"));
+                .orElseThrow(() -> new NoSuchElementException("Bed not found with ID: " + id)); // Changed exception
         return mapToDTO(bed);
     }
 
-    public BedDTO createBed(BedDTO dto) {
+    // Changed method name to saveBed to match interface, if it creates new.
+    @Override // Implementing BedService method
+    @Transactional
+    public BedDTO createBed(BedDTO dto) { // Renamed from createBed
         Bed bed = mapToEntity(dto);
         return mapToDTO(bedRepository.save(bed));
     }
 
+    @Override // Implementing BedService method
+    @Transactional
     public BedDTO updateBed(Long id, BedDTO dto) {
         Bed bed = bedRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bed not found"));
+                .orElseThrow(() -> new NoSuchElementException("Bed not found with ID: " + id)); // Changed exception
+
         bed.setBedNo(dto.getBedNo());
-        bed.setStatus(dto.getStatus());
-        Room room = roomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
-        bed.setRoom(room);
+        if (dto.getStatus() != null) { // Only update status if provided
+            bed.setStatus(dto.getStatus());
+        }
+        if (dto.getRoomId() != null && !dto.getRoomId().equals(bed.getRoom() != null ? bed.getRoom().getId() : null)) {
+            // Only update room if new roomId is provided and different
+            Room room = roomRepository.findById(dto.getRoomId())
+                    .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + dto.getRoomId())); // Changed exception
+            bed.setRoom(room);
+        }
         return mapToDTO(bedRepository.save(bed));
     }
 
+    @Override // Implementing BedService method
+    @Transactional
     public void deleteBed(Long id) {
-        Bed bed = bedRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bed not found"));
-        bedRepository.delete(bed);
+        if (!bedRepository.existsById(id)) { // Check if exists before deleting
+            throw new NoSuchElementException("Bed not found with ID: " + id); // Changed exception
+        }
+        // IMPORTANT: Consider what happens to associated bookings before deleting a bed.
+        // You might need to disassociate bookings or prevent deletion if bookings exist.
+        bedRepository.deleteById(id); // Use deleteById for simplicity
     }
 
+    // This method was custom, keep it if used
     public List<BedDTO> getBedsByRoomId(Long roomId) {
-        return bedRepository.findByRoomId(roomId)
+        // You might need a findByRoom_Id or specific query in BedRepo for this
+        return bedRepository.findByRoomId(roomId) // Assuming findByRoomId exists in BedRepo
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
-
-
 }
-
-

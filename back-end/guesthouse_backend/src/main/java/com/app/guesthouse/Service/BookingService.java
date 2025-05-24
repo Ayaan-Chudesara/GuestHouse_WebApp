@@ -20,7 +20,7 @@ public interface BookingService {
 
     BookingDTO updateBookingStatus(Long id, Booking.Status status);
 
-    void updateStatus(Long bookingId, Booking.Status status);
+
 
     List<BookingDTO> getBookingsBetweenDates(LocalDate start, LocalDate end);
 

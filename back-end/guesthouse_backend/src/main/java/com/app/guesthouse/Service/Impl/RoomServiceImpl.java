@@ -86,4 +86,11 @@ public class RoomServiceImpl implements RoomService {
         dto.setGuestHouseName(room.getGuestHouse().getName());
         return dto;
     }
+
+    @Override
+    public List<String> getDistinctRoomTypes() {
+
+        // Now that RoomRepo has findDistinctRoomTypes(), use it directly!
+        return roomRepository.findDistinctRoomTypes();
+    }
 }

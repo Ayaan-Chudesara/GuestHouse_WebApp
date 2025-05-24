@@ -3,10 +3,15 @@ package com.app.guesthouse.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor; // Added for explicit constructors
+import lombok.AllArgsConstructor; // Added for explicit constructors
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "rooms")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Room {
 
     @Id
@@ -14,45 +19,17 @@ public class Room {
     private Long id;
 
     @NotBlank
-    private String roomNo;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getRoomNo() {
-        return roomNo;
-    }
-
-    public void setRoomNo(String roomNo) {
-        this.roomNo = roomNo;
-    }
-
-    public String getRoomType() {
-        return roomType;
-    }
-
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
-    }
-
-    public GuestHouse getGuestHouse() {
-        return guestHouse;
-    }
-
-    public void setGuestHouse(GuestHouse guestHouse) {
-        this.guestHouse = guestHouse;
-    }
+    private String roomNo; // Aligned with your provided field name
 
     @NotBlank
     private String roomType;
 
-    @ManyToOne
+    private Integer numberOfBeds; // Confirmed: Capacity of the room
+
+    @ManyToOne(fetch = FetchType.LAZY) // A room belongs to one guesthouse
     @JoinColumn(name = "guest_house_id", nullable = false) // Foreign key column
     private GuestHouse guestHouse; // Reference to GuestHouse entity
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Bed> beds; // A room can have multiple physical beds
 }

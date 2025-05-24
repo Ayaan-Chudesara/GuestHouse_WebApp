@@ -11,6 +11,7 @@ export class RegisterComponent {
 
   name = '';
   email = '';
+  phone = '';
   password = '';
   confirmPassword = '';
   passwordMismatch = false;
@@ -24,8 +25,9 @@ export class RegisterComponent {
     }
 
     const user = {
-      fullName: this.name,
+      name: this.name,
       email: this.email,
+      phone: this.phone,
       password: this.password
     };
 
