@@ -1,5 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
 /* Reset default browser margin and padding */
+
+/* src/styles.css */
+
+/* Define CSS Variables for the Color Palette */
+:root {
+  --color-darkest-blue: #02030c;
+  --color-deep-blue: #102454;
+  --color-brighter-blue: #1e3a8a;
+
+  /* Lighter accents for contrast */
+  --color-accent-blue-1: #5b75a9; /* Muted medium-light blue */
+  --color-accent-blue-2: #8fa6d1; /* Lighter, softer blue */
+  --color-accent-blue-3: #bfd2f2; /* Very light, almost pastel blue */
+  --color-white: #ffffff;
+  --color-light-grey: #e0e0e0;
+  --color-text-light: var(--color-accent-blue-3); /* Main text on dark background */
+  --color-text-dark: #333333;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(to right, var(--color-darkest-blue), var(--color-deep-blue), var(--color-brighter-blue));
+  --gradient-secondary: linear-gradient(to left, var(--color-darkest-blue), var(--color-deep-blue), var(--color-brighter-blue));
+  --gradient-button: linear-gradient(45deg, var(--color-brighter-blue) 0%, var(--color-deep-blue) 100%);
+  --gradient-hover: linear-gradient(45deg, var(--color-accent-blue-1) 0%, var(--color-brighter-blue) 100%);
+
+  /* Softer Status Colors (New/Adjusted) */
+  --status-pending: #e6b800;    /* Muted Gold */
+  --status-approved: #00cc66;   /* Medium Green */
+  --status-rejected: #cc5c5c;   /* Soft Red */
+  --status-checked-in: #4fa6ea; /* Medium Sky Blue */
+  --status-checked-out: #808080; /* Neutral Grey */
+  --status-cancelled: #e67300;  /* Muted Orange */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -22,3 +55,5 @@ app-root {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+

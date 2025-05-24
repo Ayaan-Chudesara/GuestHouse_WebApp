@@ -1,0 +1,196 @@
+/* src/app/admin/admin-bookings/admin-bookings.component.css */
+
+.admin-bookings-container {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 40px auto;
+  background-color: rgba(2, 3, 12, 0.75); /* Slightly less transparent for a deeper feel */
+  border-radius: 12px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 20px rgba(30, 58, 138, 0.5); /* Stronger shadow with blue glow */
+  border: 1px solid var(--color-deep-blue);
+}
+
+h2 {
+  text-align: center;
+  color: var(--color-accent-blue-3);
+  margin-bottom: 35px;
+  font-size: 2.3em; /* Slightly larger heading */
+  text-shadow: 0 0 12px rgba(30, 58, 138, 0.7); /* Stronger glow */
+}
+
+.loading-message, .error-message, .no-bookings-message {
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1em;
+  border: 1px solid;
+}
+
+.loading-message {
+  background-color: rgba(30, 58, 138, 0.25);
+  color: var(--color-accent-blue-2);
+  border-color: var(--color-deep-blue);
+}
+
+.error-message {
+  background-color: rgba(204, 92, 92, 0.25); /* Softer red transparent */
+  color: #ffc2c2; /* Lighter, muted red for text */
+  border-color: #cc5c5c; /* Use the softer red variable from root */
+}
+
+.no-bookings-message {
+  background-color: rgba(230, 184, 0, 0.15); /* Softer gold transparent */
+  color: #ffe680; /* Lighter, muted yellow for text */
+  border-color: #e6b800; /* Use the softer gold variable from root */
+}
+
+/* Filtering Section Styling */
+.booking-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: rgba(16, 36, 84, 0.6); /* Slightly less transparent for a darker filter bar */
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.6); /* Deeper inner shadow */
+  border: 1px solid rgba(30, 58, 138, 0.4); /* Slightly stronger border */
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--color-accent-blue-2);
+  font-size: 0.95em;
+}
+
+/* Styling for all form inputs including select (dropdowns) */
+.filter-group input[type="number"],
+.filter-group input[type="date"],
+.filter-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--color-deep-blue);
+  border-radius: 6px;
+  font-size: 0.95em; /* Slightly larger font */
+  background-color: var(--color-darkest-blue); /* Dark background */
+  color: var(--color-accent-blue-3); /* Brighter text color */
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.7); /* Deeper inner shadow */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  -webkit-appearance: none; /* Remove default browser styling for select */
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23bfd2f2" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom dropdown arrow */
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 30px; /* Make space for the custom arrow */
+}
+
+/* Styling for dropdown options to be dark */
+.filter-group select option {
+    background-color: var(--color-darkest-blue); /* Dark background for options */
+    color: var(--color-accent-blue-3); /* Light text for options */
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: var(--color-brighter-blue);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.7), 0 0 10px var(--color-accent-blue-1); /* Stronger glow on focus */
+  outline: none;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* --- Table Styling --- */
+.bookings-table-wrapper {
+    overflow-x: auto;
+    background-color: rgba(16, 36, 84, 0.7); /* Deeper blue transparent background for table wrapper */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.5); /* Stronger table shadow */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
+  margin-top: 0;
+}
+
+th, td {
+  border: 1px solid rgba(30, 58, 138, 0.25); /* Slightly stronger border */
+  padding: 16px 20px; /* More padding */
+  text-align: left;
+  font-size: 0.95em; /* Slightly larger font */
+  vertical-align: middle;
+  color: var(--color-text-light);
+}
+
+th {
+  background: var(--color-brighter-blue);
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.1em; /* More letter spacing */
+  font-size: 1em; /* Slightly larger font */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.4); /* Stronger header shadow */
+}
+
+tr:nth-child(even) {
+  background-color: rgba(16, 36, 84, 0.5); /* Slightly darker for even rows */
+}
+
+tr:hover {
+  background-color: rgba(30, 58, 138, 0.6); /* More pronounced brighter blue transparent on hover */
+  transform: scale(1.008); /* More noticeable grow effect */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Status Badges/Text Styling - Using new root variables */
+.status-pending { color: var(--status-pending); font-weight: bold; }
+.status-approved { color: var(--status-approved); font-weight: bold; }
+.status-rejected { color: var(--status-rejected); font-weight: bold; }
+.status-checked-in { color: var(--status-checked-in); font-weight: bold; }
+.status-checked-out { color: var(--status-checked-out); font-weight: bold; }
+.status-cancelled { color: var(--status-cancelled); font-weight: bold; }
+
+/* Action Buttons within table */
+.booking-actions button {
+  padding: 9px 14px; /* Adjusted padding for table buttons */
+  margin: 5px; /* More margin */
+  font-size: 0.9em; /* Slightly larger text */
+}
+
+/* Adjust button colors to be softer/more integrated with the blue theme */
+.btn-approve { background: linear-gradient(45deg, #1e3a8a, #102454); } /* Use theme gradient */
+.btn-approve:hover { background: linear-gradient(45deg, #5b75a9, #1e3a8a); }
+
+.btn-check-in { background: linear-gradient(45deg, #102454, #02030c); } /* Darker gradient */
+.btn-check-in:hover { background: linear-gradient(45deg, #1e3a8a, #102454); }
+
+.btn-check-out { background-color: var(--color-accent-blue-1); } /* Muted blue */
+.btn-check-out:hover { background-color: var(--color-accent-blue-2); }
+
+.btn-reject { background-color: #a34e4e; } /* Softer, slightly desaturated red */
+.btn-reject:hover { background-color: #bf6a6a; }
+
+.btn-cancel { background-color: #b36b3f; } /* Softer, muted orange-brown */
+.btn-cancel:hover { background-color: #d1885b; }
+
+.btn-delete { background-color: #a12d2d; } /* Softer, darker red */
+.btn-delete:hover { background-color: #c44040; }

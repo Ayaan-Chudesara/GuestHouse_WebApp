@@ -1,0 +1,122 @@
+<div class="admin-bookings-container">
+  <h2>All GuestHouse Bookings (Admin View)</h2>
+
+  <div class="booking-filters">
+    <div class="filter-group">
+      <label for="filterGuestHouse">Guesthouse:</label>
+      <select id="filterGuestHouse" [(ngModel)]="filterGuestHouseId">
+        <option [ngValue]="null">All Guesthouses</option>
+        <option *ngFor="let gh of guestHouses" [ngValue]="gh.id">{{ gh.name }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filterRoomType">Room Type:</label>
+      <select id="filterRoomType" [(ngModel)]="filterRoomType">
+        <option [ngValue]="null">All Room Types</option>
+        <option *ngFor="let rt of roomTypes" [ngValue]="rt">{{ rt }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filterCheckInDate">Check-in After:</label>
+      <input type="date" id="filterCheckInDate" [(ngModel)]="filterCheckInDate">
+    </div>
+
+    <div class="filter-group">
+      <label for="filterCheckOutDate">Check-out Before:</label>
+      <input type="date" id="filterCheckOutDate" [(ngModel)]="filterCheckOutDate">
+    </div>
+
+    <div class="filter-group">
+      <label for="filterStatus">Status:</label>
+      <select id="filterStatus" [(ngModel)]="filterStatus">
+        <option [ngValue]="null">All Statuses</option>
+        <option *ngFor="let status of allBookingStatuses" [ngValue]="status">{{ status }}</option>
+      </select>
+    </div>
+
+    <div class="filter-buttons">
+      <button (click)="applyFilters()" class="btn-action btn-filter">Apply Filters</button>
+      <button (click)="clearFilters()" class="btn-action btn-clear">Clear Filters</button>
+    </div>
+  </div>
+  <div *ngIf="loading" class="loading-message">
+    Loading bookings...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="applyFilters()">Reload</button>
+  </div>
+
+  <div *ngIf="!loading && !error && bookings.length === 0" class="no-bookings-message">
+    No bookings found for the selected filters.
+  </div>
+
+  <div *ngIf="bookings.length > 0" class="bookings-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Guest</th>
+          <th>Email</th>
+          <th>Guesthouse</th>
+          <th>Room/Bed</th>
+          <th>Check-in</th>
+          <th>Duration</th>
+          <th>Check-out</th>
+          <th>Purpose</th>
+          <th>Status</th>
+          <th>Booked At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of bookings">
+          <td>{{ booking.id }}</td>
+          <td>{{ booking.guestName }}</td>
+          <td>{{ booking.guestEmail }}</td>
+          <td>{{ booking.guestHouseName }} ({{ booking.guestHouseLocation }})</td>
+          <td>{{ booking.roomNo }} / {{ booking.bedNo }}</td>
+          <td>{{ booking.checkInDate | date:'shortDate' }}</td>
+          <td>{{ booking.durationDays }} days</td>
+          <td>{{ booking.checkOutDate | date:'shortDate' }}</td>
+          <td>{{ booking.purpose }}</td>
+          <td>
+            <span [ngClass]="{'status-pending': booking.status === bookingStatus.PENDING,
+                                'status-approved': booking.status === bookingStatus.APPROVED,
+                                'status-rejected': booking.status === bookingStatus.REJECTED,
+                                'status-checked-in': booking.status === bookingStatus.CHECKED_IN,
+                                'status-checked-out': booking.status === bookingStatus.CHECKED_OUT,
+                                'status-cancelled': booking.status === bookingStatus.CANCELLED}">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>{{ booking.createdAt | date:'short' }}</td>
+          <td class="booking-actions">
+            <button *ngIf="booking.status === bookingStatus.PENDING"
+                    (click)="approveBooking(booking.id)"
+                    class="btn-action btn-approve">Approve</button>
+            <button *ngIf="booking.status === bookingStatus.PENDING || booking.status === bookingStatus.APPROVED"
+                    (click)="rejectBooking(booking.id)"
+                    class="btn-action btn-reject">Reject</button>
+
+            <button *ngIf="booking.status === bookingStatus.APPROVED"
+                    (click)="updateBookingStatus(booking.id, bookingStatus.CHECKED_IN)"
+                    class="btn-action btn-check-in">Check-in</button>
+            <button *ngIf="booking.status === bookingStatus.CHECKED_IN"
+                    (click)="updateBookingStatus(booking.id, bookingStatus.CHECKED_OUT)"
+                    class="btn-action btn-check-out">Check-out</button>
+
+            <button *ngIf="booking.status !== bookingStatus.CANCELLED && booking.status !== bookingStatus.REJECTED && booking.status !== bookingStatus.CHECKED_OUT"
+                    (click)="updateBookingStatus(booking.id, bookingStatus.CANCELLED)"
+                    class="btn-action btn-cancel">Cancel</button>
+
+            <button (click)="deleteBooking(booking.id)" class="btn-action btn-delete">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

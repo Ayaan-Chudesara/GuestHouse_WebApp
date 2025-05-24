@@ -22,9 +22,9 @@
 }
 
 .dashboard-card {
-  background: linear-gradient(to bottom right, #102454, #0e1c40);
+   background:  rgba(2, 3, 12, 0.75);
   border-radius: 15px;
-  box-shadow: 0 0 10px var(--card-glow);
+   box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 20px rgba(30, 58, 138, 0.5);
   padding: 20px;
   transition: transform 0.3s ease;
 }
@@ -50,8 +50,8 @@
 
 /* Separate Sections */
 .separate-section {
-  background: linear-gradient(to bottom, #102454, #0e1c40);
-  box-shadow: 0 0 8px var(--card-glow);
+  background:  rgba(2, 3, 12, 0.75);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 20px rgba(30, 58, 138, 0.5);;
   border-radius: 15px;
   padding: 25px 30px;
   margin-bottom: 40px;

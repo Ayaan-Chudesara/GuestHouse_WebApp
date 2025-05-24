@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HomeComponent } from './home/home.component';
 import { AdminBookingComponent } from './admin-booking/admin-booking.component';
+import { AdminReservationsComponent } from './admin-reservations/admin-reservations.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'booking', component: AdminBookingComponent }, // Add the booking page here
       // Add routes for other admin pages as you build them:
-      // { path: 'reservations', component: ReservationListComponent },
+       { path: 'reservations', component: AdminReservationsComponent },
       // { path: 'pending-requests', component: PendingRequestsComponent },
       // { path: 'reports', component: ReportsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' } // Redirect empty path to dashboard

@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { AdminReservationsComponent } from './admin-reservations/admin-reservations.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
     DashboardComponent,
     HomeComponent,
     NavbarComponent,
-    AdminBookingComponent
+    AdminBookingComponent,
+    AdminReservationsComponent
   ],
   imports: [
     CommonModule,
