@@ -16,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 // Removed unused Cors imports as you commented out the bean, but keep if you plan to use it
 
 import java.util.List; // Keep if CorsConfigurationSource is uncommented or for other uses
@@ -106,15 +109,15 @@ public class SecurityConfig {
 
     // If you plan to use CORS, uncomment and configure this bean properly.
     // It's often better to configure CORS using WebMvcConfigurer if only specific paths need it.
-    // @Bean
-    // public CorsConfigurationSource corsConfigurationSource() {
-    //     CorsConfiguration configuration = new CorsConfiguration();
-    //     configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Your frontend URL
-    //     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Add PATCH if used
-    //     configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-    //     configuration.setAllowCredentials(true); // Allow sending cookies/auth headers
-    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    //     source.registerCorsConfiguration("/**", configuration); // Apply to all paths
-    //     return source;
-    // }
+//     @Bean
+//     public CorsConfigurationSource corsConfigurationSource() {
+//         CorsConfiguration configuration = new CorsConfiguration();
+//         configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Your frontend URL
+//         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Add PATCH if used
+//         configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+//         configuration.setAllowCredentials(true); // Allow sending cookies/auth headers
+//         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//         source.registerCorsConfiguration("/**", configuration); // Apply to all paths
+//         return source;
+//     }
 }

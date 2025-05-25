@@ -16,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AdminReservationsComponent } from './admin-reservations/admin-reservations.component';
+import { AdminPendingBookingsComponent } from './admin-pending-bookings/admin-pending-bookings.component';
+import { AdminManageComponent } from './admin-manage/admin-manage.component';
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import { AdminReservationsComponent } from './admin-reservations/admin-reservati
     HomeComponent,
     NavbarComponent,
     AdminBookingComponent,
-    AdminReservationsComponent
+    AdminReservationsComponent,
+    AdminPendingBookingsComponent,
+    AdminManageComponent
   ],
   imports: [
     CommonModule,

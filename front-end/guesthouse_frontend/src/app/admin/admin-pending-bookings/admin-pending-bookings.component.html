@@ -1,0 +1,69 @@
+<div class="admin-bookings-container">
+  <h2>Pending Booking Requests</h2>
+
+  <div class="pending-actions-bar">
+    <button (click)="approveAllPending()"
+            [disabled]="pendingBookings.length === 0 || processingAll"
+            class="btn-action btn-approve-all">
+      <span *ngIf="!processingAll">Approve All ({{ pendingBookings.length }})</span>
+      <span *ngIf="processingAll">Processing...</span>
+    </button>
+    <button (click)="rejectAllPending()"
+            [disabled]="pendingBookings.length === 0 || processingAll"
+            class="btn-action btn-reject-all">
+      <span *ngIf="!processingAll">Reject All ({{ pendingBookings.length }})</span>
+      <span *ngIf="processingAll">Processing...</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    Loading pending requests...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadPendingBookings()">Reload</button>
+  </div>
+
+  <div *ngIf="!loading && !error && pendingBookings.length === 0" class="no-bookings-message">
+    No pending booking requests at this time.
+  </div>
+
+  <div *ngIf="pendingBookings.length > 0" class="bookings-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Guest</th>
+          <th>Email</th>
+          <th>Guesthouse</th>
+          <th>Room/Bed</th>
+          <th>Check-in</th>
+          <th>Duration</th>
+          <th>Check-out</th>
+          <th>Purpose</th>
+          <th>Booked At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of pendingBookings">
+          <td>{{ booking.id }}</td>
+          <td>{{ booking.guestName }}</td>
+          <td>{{ booking.guestEmail }}</td>
+          <td>{{ booking.guestHouseName }} ({{ booking.guestHouseLocation }})</td>
+          <td>{{ booking.roomNo }} / {{ booking.bedNo }}</td>
+          <td>{{ booking.checkInDate | date:'shortDate' }}</td>
+          <td>{{ booking.durationDays }} days</td>
+          <td>{{ booking.checkOutDate | date:'shortDate' }}</td>
+          <td>{{ booking.purpose }}</td>
+          <td>{{ booking.createdAt | date:'short' }}</td>
+          <td class="booking-actions">
+            <button (click)="approveBooking(booking.id)" class="btn-action btn-approve">Approve</button>
+            <button (click)="rejectBooking(booking.id)" class="btn-action btn-reject">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -13,6 +13,9 @@
     <li *ngIf="isAdmin">
       <a routerLink="/admin/pending" routerLinkActive="active-link">Pending Requests</a>
     </li>
+    <li *ngIf="isAdmin">
+      <a routerLink="/admin/manage" routerLinkActive="active-link">Manage</a>
+    </li>
 
     <!-- User Menu Items -->
     <li *ngIf="isUser">

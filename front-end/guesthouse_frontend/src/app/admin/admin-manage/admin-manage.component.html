@@ -1,0 +1,168 @@
+<div class="manage-container">
+  <h1>Manage Guesthouses, Rooms & Beds</h1>
+
+  <section class="management-section">
+    <h2>Guesthouses</h2>
+    <button (click)="onAddGuestHouse()">Add New Guesthouse</button>
+
+    <div *ngIf="guesthouses.length > 0; else noGuesthouses">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let gh of guesthouses">
+            <td>{{ gh.id }}</td>
+            <td>{{ gh.name }}</td>
+            <td>{{ gh.location }}</td>
+            <td>
+              <button (click)="onEditGuestHouse(gh)">Edit</button>
+              <button (click)="onDeleteGuestHouse(gh.id)" class="delete-button">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noGuesthouses>
+      <p>No guesthouses found. Add one to get started!</p>
+    </ng-template>
+
+    <div *ngIf="showGuestHouseForm && selectedGuestHouse" class="form-card">
+      <h3>{{ selectedGuestHouse.id ? 'Edit' : 'Add' }} Guesthouse</h3>
+      <form (ngSubmit)="onSaveGuestHouse()">
+        <div class="form-group">
+          <label for="ghName">Name:</label>
+          <input type="text" id="ghName" [(ngModel)]="selectedGuestHouse.name" name="ghName" required>
+        </div>
+        <div class="form-group">
+          <label for="ghLocation">Location:</label>
+          <input type="text" id="ghLocation" [(ngModel)]="selectedGuestHouse.location" name="ghLocation" required>
+        </div>
+        <button type="submit">Save Guesthouse</button>
+        <button type="button" (click)="cancelGuestHouseForm()" class="cancel-button">Cancel</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="management-section">
+    <h2>Rooms</h2>
+    <button (click)="onAddRoom()">Add New Room</button>
+
+    <div *ngIf="rooms.length > 0; else noRooms">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Room No.</th>
+            <th>Room Type</th>
+            <th>Guesthouse</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let room of rooms">
+            <td>{{ room.id }}</td>
+            <td>{{ room.roomNo }}</td>
+            <td>{{ room.roomType }}</td>
+            <td>{{ room.guestHouseName }}</td>
+            <td>
+              <button (click)="onEditRoom(room)">Edit</button>
+              <button (click)="onDeleteRoom(room.id)" class="delete-button">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noRooms>
+      <p>No rooms found. Add one to get started!</p>
+    </ng-template>
+
+    <div *ngIf="showRoomForm && selectedRoom" class="form-card">
+      <h3>{{ selectedRoom.id ? 'Edit' : 'Add' }} Room</h3>
+      <form (ngSubmit)="onSaveRoom()">
+        <div class="form-group">
+          <label for="roomNo">Room Number:</label>
+          <input type="text" id="roomNo" [(ngModel)]="selectedRoom.roomNo" name="roomNo" required>
+        </div>
+        <div class="form-group">
+          <label for="roomType">Room Type:</label>
+          <input type="text" id="roomType" [(ngModel)]="selectedRoom.roomType" name="roomType" required>
+        </div>
+        <div class="form-group">
+          <label for="roomGuestHouse">Guesthouse:</label>
+          <select id="roomGuestHouse" [(ngModel)]="selectedRoom.guestHouseId" name="roomGuestHouse" required>
+            <option *ngIf="guesthouses.length === 0" [ngValue]="null" disabled>No guesthouses available</option>
+            <option *ngFor="let gh of guesthouses" [ngValue]="gh.id">{{ gh.name }}</option>
+          </select>
+        </div>
+        <button type="submit">Save Room</button>
+        <button type="button" (click)="cancelRoomForm()" class="cancel-button">Cancel</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="management-section">
+    <h2>Beds</h2>
+    <button (click)="onAddBed()">Add New Bed</button>
+
+    <div *ngIf="beds.length > 0; else noBeds">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Bed No.</th>
+            <th>Status</th>
+            <th>Room No.</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bed of beds">
+            <td>{{ bed.id }}</td>
+            <td>{{ bed.bedNo }}</td>
+            <td>{{ bed.status }}</td>
+            <td>{{ bed.roomNo }}</td>
+            <td>
+              <button (click)="onEditBed(bed)">Edit</button>
+              <button (click)="onDeleteBed(bed.id)" class="delete-button">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noBeds>
+      <p>No beds found. Add one to get started!</p>
+    </ng-template>
+
+    <div *ngIf="showBedForm && selectedBed" class="form-card">
+      <h3>{{ selectedBed.id ? 'Edit' : 'Add' }} Bed</h3>
+      <form (ngSubmit)="onSaveBed()">
+        <div class="form-group">
+          <label for="bedNo">Bed Number:</label>
+          <input type="text" id="bedNo" [(ngModel)]="selectedBed.bedNo" name="bedNo" required>
+        </div>
+        <div class="form-group">
+          <label for="bedStatus">Status:</label>
+          <select id="bedStatus" [(ngModel)]="selectedBed.status" name="bedStatus" required>
+            <option *ngFor="let status of availableBedStatuses" [ngValue]="status">{{ status }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bedRoom">Room:</label>
+          <select id="bedRoom" [(ngModel)]="selectedBed.roomId" name="bedRoom" required>
+            <option *ngIf="rooms.length === 0" [ngValue]="null" disabled>No rooms available</option>
+            <option *ngFor="let room of rooms" [ngValue]="room.id">{{ room.roomNo }} ({{ room.guestHouseName }})</option>
+          </select>
+        </div>
+        <button type="submit">Save Bed</button>
+        <button type="button" (click)="cancelBedForm()" class="cancel-button">Cancel</button>
+      </form>
+    </div>
+  </section>
+
+</div>

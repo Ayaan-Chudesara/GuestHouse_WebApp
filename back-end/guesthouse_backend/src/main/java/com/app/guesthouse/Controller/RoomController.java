@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
-@CrossOrigin(origins = "*") // adjust for frontend origin if needed
+//@CrossOrigin(origins = "*") // adjust for frontend origin if needed
 public class RoomController {
     @Autowired
     private RoomService roomService;
