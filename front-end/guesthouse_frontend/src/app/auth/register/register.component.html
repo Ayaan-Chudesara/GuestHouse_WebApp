@@ -1,42 +1,37 @@
-<div class="main" style="display:flex;">
-
- <div class="left-panel"></div>
-
- <div class="login-container" >
-    <div class="login-box">
-   
-         <h2>Create Account</h2>
-  <form (ngSubmit)="register()" #registerForm="ngForm">
-
-    <label>Full Name</label>
-    <input type="text" name="name" [(ngModel)]="name" required>
-
-    <label>Email</label>
-    <input type="email" name="email" [(ngModel)]="email" required>
-
-    <label for="phone">Phone Number</label>
-        <input type="text" id="phone" name="phone" [(ngModel)]="phone" required>
-        <p *ngIf="passwordMismatch" style="color: red; font-size: 14px;">Passwords do not match</p>
-
-
-    <label>Password</label>
-    <input type="password" name="password" [(ngModel)]="password" required>
-
-    <label>Confirm Password</label>
-    <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
-
-    <p *ngIf="passwordMismatch" style="color: red; font-size: 14px;">Passwords do not match</p>
-
-    <button type="submit">Register</button>
-  </form>
-
-  <p class="login-link">
-    Already have an account? <a routerLink="/auth/login">Login here</a>
-  </p>
-
+<div class="main">
+    <div class="left-panel">
+            <img src="assets\img\loginimage.jpg" alt="Creative AI Image" class="left-panel-image">
     </div>
-  </div>
 
+    <div class="login-container">
+        <div class="login-box">
+            <p class="login-account-text">Create your account</p>
+            <h2 class="welcome-back-heading">Register Now!</h2>
+
+            <form (ngSubmit)="register()" #registerForm="ngForm">
+                <label for="fullName" class="input-label">Full Name</label>
+                <input type="text" id="fullName" name="name" [(ngModel)]="name" placeholder="Enter your full name" required>
+
+                <label for="emailRegister" class="input-label">Email</label>
+                <input type="email" id="emailRegister" name="email" [(ngModel)]="email" placeholder="your.email@example.com" required>
+
+                <label for="phone" class="input-label">Phone Number</label>
+                <input type="text" id="phone" name="phone" [(ngModel)]="phone" placeholder="e.g., +1234567890" required>
+
+                <label for="passwordRegister" class="input-label">Password</label>
+                <input type="password" id="passwordRegister" name="password" [(ngModel)]="password" placeholder="Create a password" required>
+
+                <label for="confirmPassword" class="input-label">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirm your password" required>
+
+                <p *ngIf="passwordMismatch" class="error-message">Passwords do not match</p>
+
+                <button type="submit">Register</button>
+            </form>
+
+            <p class="login-link-bottom">
+                Already have an account? <a routerLink="/auth/login">Login here</a>
+            </p>
+        </div>
+    </div>
 </div>
-
-

@@ -1,22 +1,30 @@
-<div class="main" style="display:flex;">
-
- <div class="left-panel"></div>
-
- <div class="login-container" >
-    <div class="login-box">
-    <h2>Login</h2>
-  <form (ngSubmit)="onLogin()">
-    <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required>
-    <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-
-    <p class="register-link">
-    New user? <a routerLink="/auth/register">Sign up here</a>
-  </p>
-  </form>
+<div class="main">
+    <div class="left-panel">
+        <img src="assets\img\loginimage.jpg" alt="Creative AI Image" class="left-panel-image">
     </div>
-  </div>
 
+    <div class="login-container">
+        <div class="login-box">
+            <p class="login-account-text">Login your account</p>
+            <h2 class="welcome-back-heading">Welcome Back!</h2>
+
+            <form (ngSubmit)="onLogin()">
+                <label for="email" class="input-label">Email address</label>
+                <input type="email" [(ngModel)]="email" name="email" placeholder="Hello@basitkhan.design" required>
+
+                <label for="password" class="input-label">Password</label>
+                <input type="password" [(ngModel)]="password" name="password" placeholder="Enter your password" required>
+
+                <p class="forgot-password-link">
+                    <a routerLink="/auth/forgot-password">Forgot Password?</a>
+                </p>
+
+                <button type="submit">Sign in</button>
+
+                <p class="register-link-bottom">
+                    New user? <a routerLink="/auth/register">Sign up here</a>
+                </p>
+            </form>
+        </div>
+    </div>
 </div>
-
-

@@ -1,33 +1,38 @@
 <nav class="navbar">
-  <ul class="menu">
-    <!-- Admin Menu Items -->
-    <li *ngIf="isAdmin">
-      <a routerLink="/admin/dashboard" routerLinkActive="active-link">Dashboard</a>
-    </li>
-    <li *ngIf="isAdmin">
-      <a routerLink="/admin/booking" routerLinkActive="active-link">Booking Page</a>
-    </li>
-    <li *ngIf="isAdmin">
-      <a routerLink="/admin/reservations" routerLinkActive="active-link">Reservation List</a>
-    </li>
-    <li *ngIf="isAdmin">
-      <a routerLink="/admin/pending" routerLinkActive="active-link">Pending Requests</a>
-    </li>
-    <li *ngIf="isAdmin">
-      <a routerLink="/admin/manage" routerLinkActive="active-link">Manage</a>
-    </li>
+  <div class="navbar-logo">
+    <a routerLink="/">
+      <img src="assets/img/logowithoutname.png" alt="Guest House Logo">
+    </a>
+  </div>
 
-    <!-- User Menu Items -->
-    <li *ngIf="isUser">
-      <a routerLink="/user/booking" routerLinkActive="active-link">Booking Page</a>
-    </li>
-    <li *ngIf="isUser">
-      <a routerLink="/user/my-bookings" routerLinkActive="active-link">My Bookings</a>
-    </li>
+  <div class="nav-links-container">
+    <ul class="menu">
+      <li *ngIf="isAdmin">
+        <a routerLink="/admin/dashboard" routerLinkActive="active-link">Dashboard</a>
+      </li>
+      <li *ngIf="isAdmin">
+        <a routerLink="/admin/booking" routerLinkActive="active-link">Booking Page</a>
+      </li>
+      <li *ngIf="isAdmin">
+        <a routerLink="/admin/reservations" routerLinkActive="active-link">Reservation List</a>
+      </li>
+      <li *ngIf="isAdmin">
+        <a routerLink="/admin/pending" routerLinkActive="active-link">Pending Requests</a>
+      </li>
+      <li *ngIf="isAdmin">
+        <a routerLink="/admin/manage" routerLinkActive="active-link">Manage</a>
+      </li>
 
-    <!-- Common Logout Button -->
-    <li>
-      <div (click)="logout()">Logout</div>
-    </li>
-  </ul>
+      <li *ngIf="isUser">
+        <a routerLink="/user/booking" routerLinkActive="active-link">Booking Page</a>
+      </li>
+      <li *ngIf="isUser">
+        <a routerLink="/user/my-bookings" routerLinkActive="active-link">My Bookings</a>
+      </li>
+      </ul>
+  </div>
+
+   <li class="logout-item">
+    <button mat-icon-button (click)="logout()"> <mat-icon>exit_to_app</mat-icon> </button>
+  </li>
 </nav>

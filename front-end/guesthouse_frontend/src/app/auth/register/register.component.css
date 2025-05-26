@@ -1,103 +1,178 @@
+/* Ensure global body/html styling sets the overall background if not already */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif; /* Use a suitable font */
+    overflow: hidden; /* Prevents scrollbars */
+    background-color: #1a1a2e; /* This will be the space around the main container */
+}
+
 .main {
-  display: flex;
-  height: 100vh;
-
+    display: flex;
+    height: 100vh;
+    background-color: transparent; /* Assuming this is covered by body or higher global styles */
+    padding: 20px; /* Space around the entire main container, making it "float" within the body background */
+    box-sizing: border-box;
 }
 
+/* Left Panel Styling for "Floating" Effect */
 .left-panel {
-  
-  flex: 1;
-  height: 100%;
+    flex: 1;
+    height: 100%; /* Fills the height of .main after padding */
+    
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 12px; /* Rounded corners for the "floating" image panel */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Shadow to make it look floating */
+    margin-right: 20px; /* Space between left panel and login container */
+    box-sizing: border-box;
 }
 
+.left-panel-image {
+    width: 100%; /* Make the image fill the width of its parent (.left-panel) */
+    height: 100%; /* Make the image fill the height of its parent (.left-panel) */
+    object-fit: cover; /* This is crucial: It ensures the image covers the entire area without distortion, cropping as needed */
+    display: block; /* Removes any extra space below the image sometimes added by browsers */
+    border-radius: 12px;
+}
+
+/* Login Container (Right Panel) Styling */
 .login-container {
-  flex: 1;
- 
-  justify-content: center;
-
-  height: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Fills the height of .main after padding */
+    /* Explicit background for the login/register side */
+    padding: 20px; /* Padding inside the login container itself if needed */
+    box-sizing: border-box;
+    border-radius: 12px; /* Rounded corners for the login/register panel */
+     /* Shadow for the login/register panel */
+    /* Ensure the register form can accommodate more inputs without overflow */
+    overflow-y: auto; /* Add scroll if content is too tall */
 }
-
 
 .login-box {
-  width: 70%;
-  height: 55%;
-  margin: 100px auto;
-  padding: 40px;
-
-  border-radius: 12px;
-
-  color: #ffffff;
+    width: 90%;
+    max-width: 450px; /* Max width for consistency */
+    margin: 0; /* Centered by flexbox */
+    padding: 60px 40px; /* Consistent padding */
+    border-radius: 12px;
+    color: #ffffff;
+    background-color: transparent; /* Let .login-container handle the background */
+    box-sizing: border-box;
+    /* Adjust height if necessary, but auto is usually best for forms */
+    min-height: fit-content; /* Ensure it grows with content */
 }
 
-/* Heading */
-.login-box h2 {
-  text-align: left;
-  margin-bottom: 30px;
-  font-size: 30px;
-  color: #cdd3e0;
-  font-family: Arial;
+/* Heading for Register Page */
+.login-account-text { /* Reusing class for "Create your account" */
+    color: #cdd3e0;
+    font-size: 0.9em;
+    margin-bottom: 5px;
 }
 
-/* Input fields */
+.welcome-back-heading { /* Reusing class for "Register Now!" */
+    font-size: 2.5em;
+    color: #ffffff;
+    margin-bottom: 40px; /* Space below heading */
+    font-weight: bold;
+}
+
+/* Input labels */
+.input-label {
+    display: block; /* Make label take its own line */
+    color: #cdd3e0;
+    font-size: 0.9em;
+    margin-bottom: 8px; /* Space between label and input */
+    margin-top: 20px; /* Add space above each label */
+}
+
+/* Input fields (dark theme, blue focus/hover) - extended for text type */
 .login-box input[type="email"],
 .login-box input[type="password"],
-.login-box input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 40px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  background-color: #02030c;
-  color: #ffffff;
-  font-size: 16px;
-  opacity: 0.6;
-  transition:background-color ease 0.6s;
+.login-box input[type="text"] { /* Added type="text" */
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 30px; /* Space below inputs */
+    border: 1px solid #333; /* Darker border */
+    border-radius: 8px;
+    background-color: #1a1a2e; /* Darker background */
+    color: #ffffff;
+    font-size: 1em;
+    opacity: 1;
+    transition: box-shadow ease 0.3s, border-color ease 0.3s;
+    box-sizing: border-box;
+}
+
+/* Placeholders */
+.login-box input[type="email"]::placeholder,
+.login-box input[type="password"]::placeholder,
+.login-box input[type="text"]::placeholder { /* Added type="text" */
+    color: #888;
+}
+
+/* Focus/Hover for all input types */
+.login-box input[type="email"]:focus,
+.login-box input[type="password"]:focus,
+.login-box input[type="text"]:focus { /* Added type="text" */
+    outline: none;
+    border-color: #3f66ff; /* Blue border on focus */
+    box-shadow: 0px 0px 15px rgba(63, 102, 255, 0.4); /* Blue glow on focus */
 }
 
 .login-box input[type="email"]:hover,
 .login-box input[type="password"]:hover,
-.login-box input[type="text"]:hover {
+.login-box input[type="text"]:hover { /* Added type="text" */
+   
 
-  box-shadow: 0px 4px 50px 13px #3f66ff;
+  box-shadow: 0px 3px 50px 15px #3f66ff;
 }
 
-/* Submit button */
+/* Password Mismatch Error Message */
+.error-message {
+    color: #ff4d4d; /* Red color for errors */
+    font-size: 0.85em;
+    margin-top: -20px; /* Pull it up closer to the password fields */
+    margin-bottom: 20px; /* Space below the error message */
+    text-align: center; /* Center the error message */
+}
+
+
+/* Submit button (blue color, hover action) */
 .login-box button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #02030c;
-  border: none;
-  color: #ffffff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.5s ease;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    background-color: #3f66ff; /* Blue background */
+    border: none;
+    color: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 30px; /* More space above button */
+    margin-bottom: 30px; /* Space below the button before the link */
 }
 
 .login-box button:hover {
-  
-  box-shadow: 0px 3px 50px 7px #3f66ff;
+    background-color: #5a80ff; /* Slightly lighter blue on hover */
+    box-shadow: 0px 5px 20px rgba(63, 102, 255, 0.4); /* Enhanced shadow on hover */
 }
 
-
-
-/* Optional link or error message */
-.login-box .message {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #cccccc;
+/* Login Link at the bottom */
+.login-link-bottom { /* New class for this specific link */
+    text-align: center;
+    margin-top: 20px; /* Adjust spacing as needed */
+    font-size: 0.9em;
+    color: #cdd3e0;
 }
 
-.register-link {
-  color: white;
-  text-decoration: none;
-
+.login-link-bottom a {
+    color: #3f66ff;
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
-a {
-  color: white;
-  text-decoration: underline;
-
+.login-link-bottom a:hover {
+    text-decoration: underline;
+    color: #5a80ff;
 }
