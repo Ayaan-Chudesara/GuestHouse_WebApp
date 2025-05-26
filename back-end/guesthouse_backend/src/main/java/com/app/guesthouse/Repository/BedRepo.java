@@ -53,4 +53,19 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             @Param("checkOutDate") LocalDate checkOutDate); // This is the end date of the search, it will be used in comparison with other bookings
 
 
+    @Query("SELECT b FROM Bed b WHERE b.room.id = :roomId " +
+            "AND b.status = 'AVAILABLE' " + // Ensure the bed is marked as AVAILABLE
+            "AND b.id NOT IN (" + // Exclude beds that have active overlapping bookings
+            "   SELECT bo.bed.id FROM Booking bo WHERE bo.bed.id = b.id " +
+            "   AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
+            "   AND (" + // Overlap condition:
+            "       (bo.bookingDate < :checkOutDate AND FUNCTION('DATE_ADD', bo.bookingDate, 'DAY', bo.durationDays) > :checkInDate)" +
+            "   )" +
+            ")")
+    List<Bed> findFirstAvailableBedInRoomForDates(
+            @Param("roomId") Long roomId,
+            @Param("checkInDate") LocalDate checkInDate,
+            @Param("checkOutDate") LocalDate checkOutDate
+    );
+
 }

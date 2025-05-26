@@ -3,6 +3,7 @@ package com.app.guesthouse.Controller;
 import com.app.guesthouse.DTO.BookingDTO;
 import com.app.guesthouse.Entity.Booking; // For Booking.Status enum
 import com.app.guesthouse.Service.BookingService;
+import com.app.guesthouse.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,15 @@ import java.lang.IllegalArgumentException; // For invalid input
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = "*") // Consider restricting origins in production
+//@CrossOrigin(origins = "*") // Consider restricting origins in production
 public class BookingController {
     private final BookingService bookingService;
+    private final UserService userService;
 
     @Autowired
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, UserService userService) {
         this.bookingService = bookingService;
+        this.userService = userService;
     }
 
     // Endpoint for regular user-initiated booking (status defaults to PENDING in service)

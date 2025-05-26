@@ -32,4 +32,6 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bed> beds; // A room can have multiple physical beds
+
+    private double pricePerNight;
 }

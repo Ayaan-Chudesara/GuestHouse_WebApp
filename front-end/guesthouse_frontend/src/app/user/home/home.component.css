@@ -1,0 +1,16 @@
+.dashboard-home{
+    background-color: linear-gradient(to bottom, #02030c, #0e1c40);
+    
+}
+:host {
+  display: block;
+  height: 100%;
+}
+
+.full-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: white;
+}

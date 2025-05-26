@@ -57,7 +57,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getPendingBookings());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping("/bookings/{id}/approve")
     public ResponseEntity<String> approveBooking(@PathVariable Long id) {
         try {
@@ -73,7 +73,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping("/bookings/{id}/reject")
     public ResponseEntity<String> rejectBooking(@PathVariable Long id) {
         try {
@@ -134,7 +134,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping("/users/save") // Changed path for clarity
     public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO dto){
         try{
@@ -147,7 +147,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PutMapping("/users/update/{id}") // Changed path for clarity
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO dto){
         try{
@@ -193,7 +193,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/bookings/filter")
     public ResponseEntity<List<BookingDTO>> getFilteredBookings(
             @RequestParam(required = false) Long guestHouseId,
@@ -204,7 +204,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getFilteredBookings(guestHouseId, roomType, checkInDate, checkOutDate, status));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PutMapping("/bookings/{id}")
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long id, @RequestBody BookingDTO bookingDTO) {
         try {
@@ -226,7 +226,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @DeleteMapping("/bookings/{id}")
     public ResponseEntity<String> deleteBooking(@PathVariable Long id) {
         try {
@@ -240,13 +240,13 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/guesthouses-for-filter")
     public ResponseEntity<List<GuestHouseDTO>> getAllGuestHousesForFilter() {
         return ResponseEntity.ok(guestHouseService.getAllGuestHouses());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/rooms/types-for-filter")
     public ResponseEntity<List<String>> getAllRoomTypesForFilter() {
         return ResponseEntity.ok(roomService.getDistinctRoomTypes());

@@ -110,7 +110,7 @@
 
 /* Make each section smaller when side by side */
 .small-section {
-  flex: 1 1 350px;
+  flex: 1 1 350px; 
   max-width: 420px;
   padding: 20px;
 }

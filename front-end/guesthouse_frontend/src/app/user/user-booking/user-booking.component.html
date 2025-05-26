@@ -1,0 +1,124 @@
+<div class="booking-container">
+  <mat-card class="booking-card">
+    <mat-card-header>
+      <mat-card-title>Book Your Stay</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="bookingForm" (ngSubmit)="searchAvailability()">
+        <h3>Check Availability</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Guest House</mat-label>
+          <mat-select formControlName="guestHouseId" required>
+            <mat-option *ngFor="let house of guestHouses" [value]="house.id">
+              {{ house.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="bookingForm.get('guestHouseId')?.hasError('required') && bookingForm.get('guestHouseId')?.touched">
+            Guest House is required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Room Type</mat-label>
+          <mat-select formControlName="roomTypeId" required>
+            <mat-option *ngFor="let type of roomTypes" [value]="type">
+              {{ type }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="bookingForm.get('roomTypeId')?.hasError('required') && bookingForm.get('roomTypeId')?.touched">
+            Room Type is required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Number of Guests</mat-label>
+          <input matInput type="number" formControlName="numberOfGuests" min="1" required>
+          <mat-error *ngIf="bookingForm.get('numberOfGuests')?.hasError('required') && bookingForm.get('numberOfGuests')?.touched">
+            Number of guests is required.
+          </mat-error>
+          <mat-error *ngIf="bookingForm.get('numberOfGuests')?.hasError('min') && bookingForm.get('numberOfGuests')?.touched">
+            Must be at least 1 guest.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="date-range-container">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Check-in Date</mat-label>
+            <input matInput [matDatepicker]="checkInPicker" formControlName="checkInDate" [min]="getTodayDate()">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+            <mat-datepicker #checkInPicker></mat-datepicker>
+            <mat-error *ngIf="bookingForm.get('checkInDate')?.hasError('required') && bookingForm.get('checkInDate')?.touched">
+              Check-in date is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Check-out Date</mat-label>
+            <input matInput [matDatepicker]="checkOutPicker" formControlName="checkOutDate" [min]="bookingForm.get('checkInDate')?.value || getTodayDate()">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+            <mat-datepicker #checkOutPicker></mat-datepicker>
+            <mat-error *ngIf="bookingForm.get('checkOutDate')?.hasError('required') && bookingForm.get('checkOutDate')?.touched">
+              Check-out date is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Purpose (optional)</mat-label>
+          <input matInput formControlName="purpose" placeholder="e.g. Official Visit">
+        </mat-form-field>
+
+        <mat-card-actions class="booking-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="bookingForm.invalid">Search Available Rooms</button>
+          <button mat-button type="button" (click)="resetForm()">Clear Form</button>
+        </mat-card-actions>
+      </form>
+
+      <p class="info-message" *ngIf="message">{{ message }}</p>
+
+      <div class="available-rooms-section" *ngIf="availableRooms.length > 0">
+        <h3>Available Rooms</h3>
+        <div class="room-list">
+          <mat-card class="room-card" *ngFor="let room of availableRooms">
+            <mat-card-header>
+              <mat-card-title>Room No: {{ room.roomNo }}</mat-card-title>
+              <mat-card-subtitle>{{ room.roomType }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p><strong>Guest House:</strong> {{ room.guestHouseName }}</p>
+              <p><strong>Number of Beds:</strong> {{ room.numberOfBeds }}</p> <p><strong>Price per night:</strong> ${{ room.pricePerNight | number:'1.2-2' }}</p>
+              </mat-card-content>
+            <mat-card-actions class="card-actions">
+              <button mat-raised-button color="accent" (click)="selectRoom(room)">Select This Room</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+
+      <div class="no-rooms-found" *ngIf="availableRooms.length === 0 && searchAttempted">
+        <p>No rooms available for the selected dates and criteria. Please try different dates or criteria.</p>
+      </div>
+
+      <div class="selected-room-section" *ngIf="selectedRoom">
+        <h3>Confirm Your Booking</h3>
+        <mat-card class="selected-room-details">
+          <mat-card-content>
+            <p>You have selected: <strong>Room No: {{ selectedRoom.roomNo }}</strong> ({{ selectedRoom.roomType }})</p>
+            <p>Guest House: {{ selectedRoom.guestHouseName }}</p>
+            <p>Check-in: {{ bookingForm.get('checkInDate')?.value | date:'fullDate' }}</p>
+            <p>Check-out: {{ bookingForm.get('checkOutDate')?.value | date:'fullDate' }}</p>
+            <p>Number of Guests: {{ bookingForm.get('numberOfGuests')?.value }}</p>
+            <p>Total estimated price: <strong>${{ calculateTotalPrice() | number:'1.2-2' }}</strong></p>
+          </mat-card-content>
+          <mat-card-actions class="card-actions">
+            <button mat-raised-button color="primary" (click)="confirmBooking()">Confirm Booking</button>
+            <button mat-button (click)="clearSelection()">Change Selection</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

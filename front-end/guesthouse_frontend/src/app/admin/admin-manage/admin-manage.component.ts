@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // <--- Added OnInit
 import { forkJoin } from 'rxjs';
 import { Bed, BedStatus } from 'src/app/core/models/bed.model';
 import { GuestHouse } from 'src/app/core/models/guesthouse.model';
@@ -13,8 +13,9 @@ import { GuesthouseService } from '../services/guesthouse.service';
   templateUrl: './admin-manage.component.html',
   styleUrls: ['./admin-manage.component.css']
 })
-export class AdminManageComponent {
- // Data lists
+export class AdminManageComponent implements OnInit { // <--- Implemented OnInit
+
+  // Data lists
   guesthouses: GuestHouse[] = [];
   rooms: Room[] = [];
   beds: Bed[] = [];
@@ -30,6 +31,7 @@ export class AdminManageComponent {
   showBedForm: boolean = false;
 
   // For dropdowns in forms
+  availableRoomTypes: string[] = ['Single Room', 'Double Room', 'Suite', 'Family Room']; // <--- Added common room types
   availableBedStatuses = Object.values(BedStatus); // Get all values from the enum
 
   constructor(
@@ -85,10 +87,7 @@ export class AdminManageComponent {
           next: (updatedGh) => {
             console.log('GuestHouse updated:', updatedGh);
             alert('Guesthouse updated successfully!');
-            // Only reload guesthouses if this doesn't affect other lists heavily, or reload all
-            // For simplicity and safety, if dependencies exist, reloading all is better.
-            // If the backend has strict foreign key constraints preventing deletion of GH with rooms, this is fine.
-            this.loadAllData(); // <--- Corrected: Reload all data after update
+            this.loadAllData();
             this.cancelGuestHouseForm();
           },
           error: (error: HttpErrorResponse) => {
@@ -102,7 +101,7 @@ export class AdminManageComponent {
           next: (newGh) => {
             console.log('GuestHouse created:', newGh);
             alert('Guesthouse created successfully!');
-            this.loadAllData(); // <--- Corrected: Reload all data after creation
+            this.loadAllData();
             this.cancelGuestHouseForm();
           },
           error: (error: HttpErrorResponse) => {
@@ -151,7 +150,15 @@ export class AdminManageComponent {
       alert('Please add a guesthouse first before adding a room.');
       return;
     }
-    this.selectedRoom = { roomNo: '', roomType: '', guestHouseId: this.guesthouses[0].id!, guestHouseName: this.guesthouses[0].name }; // Default to first guesthouse
+    // Fixed: Initialize all required properties for Room interface
+    this.selectedRoom = {
+      roomNo: '',
+      roomType: this.availableRoomTypes[0] || '', // Default to the first available room type or empty string
+      guestHouseId: this.guesthouses[0].id!,
+      guestHouseName: this.guesthouses[0].name,
+      numberOfBeds: 1,   // <--- Added default value
+      pricePerNight: 50  // <--- Added default value, adjust as needed
+    };
     this.showRoomForm = true;
     this.showGuestHouseForm = false;
     this.showBedForm = false;
@@ -181,7 +188,7 @@ export class AdminManageComponent {
           next: (updatedRoom) => {
             console.log('Room updated:', updatedRoom);
             alert('Room updated successfully!');
-            this.loadAllData(); // <--- Corrected: Reload all data after update
+            this.loadAllData();
             this.cancelRoomForm();
           },
           error: (error: HttpErrorResponse) => {
@@ -195,7 +202,7 @@ export class AdminManageComponent {
           next: (newRoom) => {
             console.log('Room created:', newRoom);
             alert('Room created successfully!');
-            this.loadAllData(); // <--- Corrected: Reload all data after creation
+            this.loadAllData();
             this.cancelRoomForm();
           },
           error: (error: HttpErrorResponse) => {
@@ -269,7 +276,7 @@ export class AdminManageComponent {
           next: (updatedBed) => {
             console.log('Bed updated:', updatedBed);
             alert('Bed updated successfully!');
-            this.loadAllData(); // <--- Corrected: Reload all data after update
+            this.loadAllData();
             this.cancelBedForm();
           },
           error: (error: HttpErrorResponse) => {
@@ -283,7 +290,7 @@ export class AdminManageComponent {
           next: (newBed) => {
             console.log('Bed created:', newBed);
             alert('Bed created successfully!');
-            this.loadAllData(); // <--- Corrected: Reload all data after creation
+            this.loadAllData();
             this.cancelBedForm();
           },
           error: (error: HttpErrorResponse) => {

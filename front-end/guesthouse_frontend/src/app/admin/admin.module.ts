@@ -18,13 +18,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { AdminReservationsComponent } from './admin-reservations/admin-reservations.component';
 import { AdminPendingBookingsComponent } from './admin-pending-bookings/admin-pending-bookings.component';
 import { AdminManageComponent } from './admin-manage/admin-manage.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
     HomeComponent,
-    NavbarComponent,
+
     AdminBookingComponent,
     AdminReservationsComponent,
     AdminPendingBookingsComponent,
@@ -42,7 +43,9 @@ import { AdminManageComponent } from './admin-manage/admin-manage.component';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
+    SharedModule
   ]
 })
 export class AdminModule { }

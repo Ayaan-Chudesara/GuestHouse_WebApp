@@ -1,0 +1,366 @@
+/* src/app/user/booking/booking.component.css - Custom Dark Theme with White Inputs */
+
+/* --- Overall Page and Card Structure --- */
+.booking-container {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 64px); /* Adjust based on your header height */
+  box-sizing: border-box;
+  /* Background will be inherited from global styles (e.g., body background #02030c) */
+}
+
+.booking-card {
+  width: 100%;
+  max-width: 1000px; /* Wider card */
+  background: rgba(2, 3, 12, 0.75); /* Deep Royal Blue with transparency for the card background */
+  color: #FFFFFF; /* All general card text to pure white */
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(30, 58, 138, 0.5); /* Deep shadow with blue glow */
+  border-radius: 8px;
+  padding: 30px;
+}
+
+.mat-card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  display: block; /* Ensures title/subtitle stack correctly */
+}
+
+.mat-card-title {
+  color: #FFFFFF; /* Mat Card Title to pure white */
+  font-size: 2.2em;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.mat-card-subtitle {
+  color: #FFFFFF; /* Subtitle to pure white */
+  font-size: 1em;
+}
+
+h3 {
+  color: #FFFFFF; /* H3 (section headers) to pure white */
+  margin-top: 30px;
+  margin-bottom: 18px;
+  font-size: 1.5em;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Subtle white border */
+  padding-bottom: 10px;
+}
+
+/* --- Form Layouts --- */
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.date-range-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.date-field {
+  flex: 1; /* Allows fields to take equal space */
+  min-width: 250px; /* Minimum width before wrapping */
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 15px; /* Space between buttons */
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* Separator above buttons */
+}
+
+/* --- Angular Material Form Field Overrides (::ng-deep is used as per your reference) --- */
+/* This block explicitly targets Material's internal elements to change their appearance */
+:host ::ng-deep {
+  /* Input Field Wrapper Background */
+  .mat-mdc-text-field-wrapper {
+    background-color: #FFFFFF !important; /* Pure white background for the input field itself */
+    border-radius: 4px; /* Ensure rounded corners are maintained */
+    /* Remove default padding to let inner content handle it */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Outline Border */
+  .mat-mdc-form-field-appearance-outline .mat-mdc-form-field-outline {
+    color: rgba(0, 0, 0, 0.6) !important; /* Dark outline for contrast against white field */
+    opacity: 1 !important;
+  }
+
+  /* Labels (Floating and Static) */
+  .mat-mdc-form-field-label {
+    color: rgba(0, 0, 0, 0.6) !important; /* Dark grey for labels on white background */
+  }
+
+  /* Focused/Floating Label and Outline */
+  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label,
+  .mat-mdc-form-field.mat-mdc-form-field-can-float.mat-mdc-form-field-should-float .mat-mdc-form-field-label {
+    color: #6B94FF !important; /* Vibrant accent blue for focused labels */
+  }
+
+  /* Input Text and Caret (blinking cursor) */
+  .mat-mdc-form-field-input-control {
+    color: #02030c !important; /* Near-black text inside white input fields for contrast */
+    caret-color: #6B94FF !important; /* Vibrant accent blue for blinking cursor */
+  }
+
+  /* Hint Text */
+  .mat-mdc-form-field-hint {
+    color: rgba(0, 0, 0, 0.6) !important; /* Dark grey for hint text on white background */
+  }
+
+  /* Select Value and Arrow */
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow {
+    color: #02030c !important; /* Near-black for select value and arrow */
+  }
+
+  /* Datepicker Toggle Icon (calendar icon) */
+  .mat-mdc-datepicker-toggle-default-icon {
+    color: rgba(0, 0, 0, 0.6) !important; /* Dark grey for the calendar icon on white background */
+  }
+
+  /* Mat Select Dropdown Panel Styles */
+  .mat-mdc-select-panel {
+    background: #0d1226; /* Darker background for the dropdown panel itself */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7); /* Deeper shadow for pop-up */
+  }
+
+  .mat-mdc-option {
+    color: #FFFFFF; /* White text for options */
+  }
+
+  .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background-color: rgba(107, 148, 255, 0.2) !important; /* Accent blue with transparency for selected option */
+    color: #FFFFFF !important; /* White text for selected option */
+  }
+
+  .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+    background-color: rgba(255, 255, 255, 0.08) !important; /* Subtle hover effect */
+  }
+
+
+  /* --- BUTTONS --- */
+  .mat-mdc-raised-button.mat-primary,
+  .mat-mdc-unelevated-button.mat-primary {
+    background-color: #FFFFFF !important; /* Primary button background to pure white */
+    color: #02030c !important; /* Near-black text on white button */
+    font-weight: 600;
+    padding: 8px 24px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mat-mdc-raised-button.mat-primary:hover:not([disabled]),
+  .mat-mdc-unelevated-button.mat-primary:hover:not([disabled]) {
+    background-color: #e0e0e0 !important; /* Slightly darker white on hover */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important; /* Darker shadow for white button */
+  }
+
+  .mat-mdc-button { /* For regular text buttons, like "Clear Form" */
+    color: #FFFFFF !important; /* Text button color to pure white */
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    border-radius: 5px;
+  }
+
+  .mat-mdc-button:hover:not([disabled]) {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Subtle white transparent background on hover */
+  }
+
+  /* Disabled Button States */
+  .mat-mdc-raised-button[disabled],
+  .mat-mdc-button[disabled],
+  .mat-mdc-unelevated-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Error Message Colors */
+  .mat-mdc-form-field-bottom-align::before { /* For the underline when there's an error */
+    background-color: #FF6B6B !important; /* Bright red for error lines */
+  }
+  .mat-mdc-form-field.mat-form-field-invalid .mat-mdc-form-field-label {
+      color: #FF6B6B !important; /* Red label for invalid fields */
+  }
+  .mat-mdc-form-field.mat-form-field-invalid .mat-mdc-form-field-outline-thick {
+    color: #FF6B6B !important; /* Red outline for invalid fields */
+  }
+  .mat-mdc-form-field-subscript-wrapper .mat-error {
+      color: #FF6B6B !important; /* Red for the actual error message text */
+  }
+
+} /* End of ::ng-deep block */
+
+/* --- Info/Message Blocks --- */
+.info-message {
+  padding: 18px;
+  margin-top: 25px;
+  border-radius: 6px;
+  font-size: 1.1em;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: rgba(107, 148, 255, 0.2); /* Accent blue with transparency */
+  border: 1px solid rgba(107, 148, 255, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Available Rooms Section --- */
+.available-rooms-section {
+  margin-top: 40px;
+}
+
+.room-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.room-card {
+  background-color: #0d1226; /* Slightly lighter dark blue for room cards */
+  color: #FFFFFF;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.room-card:hover {
+  transform: translateY(-8px); /* More pronounced lift on hover */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.room-card .mat-card-header {
+  background-color: rgba(30, 58, 138, 0.4); /* Accent blue background for room card headers */
+  color: #FFFFFF;
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: block; /* Ensure title/subtitle stack */
+}
+
+.room-card .mat-card-title {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.room-card .mat-card-subtitle {
+  color: #c0c0c0; /* Lighter grey for subtitle */
+  font-size: 0.95em;
+}
+
+.room-card .mat-card-content {
+  padding: 20px;
+}
+
+.room-card .mat-card-content p {
+  margin: 10px 0;
+  font-size: 1em;
+  color: #e0e0e0;
+}
+
+.room-card .card-actions {
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.room-card .card-actions button {
+    background-color: #6B94FF !important; /* Vibrant accent blue for select button */
+    color: #02030c !important;
+    font-weight: 600;
+}
+
+.room-card .card-actions button:hover {
+    background-color: #5577FF !important; /* Slightly darker accent blue on hover */
+}
+
+.no-rooms-found {
+  padding: 25px;
+  margin-top: 30px;
+  border-radius: 6px;
+  background-color: rgba(255, 107, 107, 0.2); /* Light red with transparency */
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #FFFFFF;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Selected Room Section (Confirmation) --- */
+.selected-room-section {
+  margin-top: 40px;
+}
+
+.selected-room-details {
+  background-color: #0d1226; /* Same as room card background */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(107, 148, 255, 0.3); /* Subtle blue border */
+  padding: 25px;
+}
+
+.selected-room-details .mat-card-content p {
+  font-size: 1.15em;
+  margin-bottom: 10px;
+  color: #e0e0e0;
+}
+
+.selected-room-details .mat-card-content strong {
+  color: #6B94FF; /* Vibrant accent blue for emphasis */
+  font-weight: 700;
+}
+
+.selected-room-details .card-actions {
+  justify-content: flex-end;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .booking-card {
+    max-width: 90%;
+    padding: 25px;
+  }
+}
+@media (max-width: 768px) {
+  .booking-container {
+    padding: 16px;
+  }
+  .booking-card {
+    padding: 20px;
+    max-width: 100%;
+    border-radius: 0; /* Full width and no rounded corners on very small screens for better fit */
+  }
+  .mat-card-title {
+    font-size: 1.8em;
+  }
+  h3 {
+    font-size: 1.3em;
+  }
+  .date-range-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .booking-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .booking-actions button {
+    margin-bottom: 10px;
+  }
+  .room-list {
+    grid-template-columns: 1fr; /* Single column on small screens */
+  }
+}

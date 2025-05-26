@@ -1,0 +1,180 @@
+/* Dark Theme Variables (Optional, but good practice for consistency) */
+:root {
+  --dark-background: #121212; /* Very dark background */
+  --dark-surface: #1e1e1e;   /* Slightly lighter for cards/surfaces */
+  --dark-on-surface: #e0e0e0; /* Light text on dark surfaces */
+  --dark-primary: #90caf9;   /* Light blue for primary elements (e.g., buttons, accents) */
+  --dark-accent: #80cbc4;    /* Teal for accent (e.g., selected items) */
+  --dark-warn: #ef9a9a;      /* Light red for warnings/errors */
+  --dark-border: #333333;    /* Subtle borders */
+  --dark-hover: #2a2a2a;     /* Hover state for rows/items */
+}
+
+
+/* Overall Container for the page */
+.my-bookings-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px 20px;
+  min-height: calc(100vh - 64px);
+  background-color: var(--dark-background); /* Use dark background */
+  box-sizing: border-box;
+  color: var(--dark-on-surface); /* Default text color for the page */
+}
+
+/* Styling for the main card that wraps the bookings content */
+.bookings-card {
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Darker, more pronounced shadow */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--dark-surface); /* Dark surface color for cards */
+  color: var(--dark-on-surface); /* Text color on card surface */
+}
+
+/* Header styling for the card */
+.mat-mdc-card-header {
+  background-color: #313131; /* A dark grey for the header */
+  color: white; /* White text for header title */
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--dark-border); /* Subtle separator */
+}
+
+.mat-mdc-card-title {
+  font-size: 2.2em;
+  font-weight: 500;
+  margin: 0;
+  color: var(--dark-primary); /* Primary accent color for the title */
+}
+
+/* Content area within the card */
+.mat-mdc-card-content {
+  padding: 30px 24px;
+}
+
+/* Styles for loading spinner and messages */
+.loading-spinner, .message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--dark-on-surface);
+  font-size: 1.1em;
+}
+
+.loading-spinner .mat-mdc-spinner {
+  margin-bottom: 20px;
+  /* Color of spinner itself is typically controlled by Angular Material's theme,
+     but you can force it if needed:
+     color: var(--dark-primary);
+  */
+}
+
+.message-container .mat-icon {
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
+  margin-bottom: 15px;
+  color: var(--dark-on-surface); /* Default message icon color */
+}
+
+.message-container p {
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Error Message Specifics */
+.message-container.error-message {
+  background-color: #3b2020; /* Darker red background for error */
+  color: var(--dark-warn); /* Light red text for error */
+  padding: 30px;
+  border: 1px solid #5a3c3c; /* Darker red border */
+}
+
+.message-container.error-message .mat-icon {
+  color: var(--dark-warn); /* Light red icon for error */
+}
+
+/* Table container styling */
+.bookings-table-container {
+  overflow-x: auto;
+  margin-top: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for the table */
+  background-color: var(--dark-surface); /* Match card surface for consistency */
+}
+
+/* Basic table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Header cells */
+th {
+  background-color: #2a2a2a; /* Slightly lighter dark for table headers */
+  color: #bdbdbd; /* Lighter grey for header text (Material Grey 400) */
+  font-weight: 600;
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 2px solid var(--dark-border);
+}
+
+/* Data cells */
+td {
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--dark-border); /* Darker subtle border for data rows */
+  color: var(--dark-on-surface); /* Light text on dark surface */
+}
+
+/* Hover effect for table rows */
+tr:hover {
+  background-color: var(--dark-hover); /* Darker highlight on hover */
+}
+
+/* Last row border removed for cleaner look */
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Button Styling Adjustments (assuming Angular Material applies colors) */
+/* This is more for general dark theme compatibility for buttons */
+.mat-mdc-raised-button.mat-primary {
+  background-color: var(--dark-primary);
+  color: #121212; /* Dark text for primary button */
+}
+
+.mat-mdc-button {
+  color: var(--dark-primary); /* Primary color for text buttons */
+}
+.mat-mdc-button.mat-warn {
+  color: var(--dark-warn); /* Warn color for warn text buttons */
+}
+
+/* Optional: Styling for action buttons within the table (if you uncomment them) */
+/*
+td .mat-icon-button {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  margin-right: 8px;
+}
+td .mat-icon-button .mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--dark-primary);
+}
+td .mat-icon-button.mat-warn .mat-icon {
+  color: var(--dark-warn);
+}
+*/

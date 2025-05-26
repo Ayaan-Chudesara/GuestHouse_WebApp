@@ -24,7 +24,7 @@ export class LoginComponent {
         if (role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         } else if (role === 'USER') {
-          this.router.navigate(['/user/dashboard']);
+          this.router.navigate(['/user/booking']);
         } else {
           alert('Unknown role!');
         }

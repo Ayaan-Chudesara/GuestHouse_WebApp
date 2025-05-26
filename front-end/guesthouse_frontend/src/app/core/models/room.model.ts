@@ -5,5 +5,7 @@ export interface Room {
   roomNo: string;
   roomType: string;
   guestHouseId: number;
-  guestHouseName: string; // To display guesthouse name in frontend
+  guestHouseName: string;
+  numberOfBeds: number; // <--- ADD THIS LINE
+  pricePerNight: number; // To display guesthouse name in frontend
 }

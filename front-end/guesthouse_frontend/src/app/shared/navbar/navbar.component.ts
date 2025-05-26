@@ -13,9 +13,11 @@ export class NavbarComponent {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    const role = this.authService.getRoleFromToken(localStorage.getItem('token') || '');
+    const role = this.authService.getRoleFromToken(localStorage.getItem('jwt_token') || '');
     this.isAdmin = role === 'ADMIN';
     this.isUser = role === 'USER';
+       console.log('Navbar Subscribe: Role=', role, 'IsAdmin=', this.isAdmin, 'IsUser=', this.isUser);
+  
   }
 
   logout(): void {
