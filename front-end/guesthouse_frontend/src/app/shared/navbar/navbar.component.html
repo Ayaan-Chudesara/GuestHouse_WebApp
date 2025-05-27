@@ -1,38 +1,50 @@
-<nav class="navbar">
-  <div class="navbar-logo">
-    <a routerLink="/">
-      <img src="assets/img/logowithoutname.png" alt="Guest House Logo">
-    </a>
-  </div>
+<ng-container *ngIf="authService.isLoggedIn()">
+    <button class="menu-toggle-button" (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
+    </button>
 
-  <div class="nav-links-container">
-    <ul class="menu">
-      <li *ngIf="isAdmin">
-        <a routerLink="/admin/dashboard" routerLinkActive="active-link">Dashboard</a>
-      </li>
-      <li *ngIf="isAdmin">
-        <a routerLink="/admin/booking" routerLinkActive="active-link">Booking Page</a>
-      </li>
-      <li *ngIf="isAdmin">
-        <a routerLink="/admin/reservations" routerLinkActive="active-link">Reservation List</a>
-      </li>
-      <li *ngIf="isAdmin">
-        <a routerLink="/admin/pending" routerLinkActive="active-link">Pending Requests</a>
-      </li>
-      <li *ngIf="isAdmin">
-        <a routerLink="/admin/manage" routerLinkActive="active-link">Manage</a>
-      </li>
+    <div class="sidebar-container" [class.open]="isSidebarOpen">
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <a  (click)="closeSidebar()">
+                    <img src="assets/img/logowithoutname.png" alt="Guest House Logo">
+                </a>
+            </div>
 
-      <li *ngIf="isUser">
-        <a routerLink="/user/booking" routerLinkActive="active-link">Booking Page</a>
-      </li>
-      <li *ngIf="isUser">
-        <a routerLink="/user/my-bookings" routerLinkActive="active-link">My Bookings</a>
-      </li>
-      </ul>
-  </div>
+            <div class="nav-links-container">
+                <ul class="menu">
+                    <li *ngIf="isAdmin">
+                        <a routerLink="/admin/dashboard" routerLinkActive="active-link" (click)="closeSidebar()">Dashboard</a>
+                    </li>
+                    <li *ngIf="isAdmin">
+                        <a routerLink="/admin/booking" routerLinkActive="active-link" (click)="closeSidebar()">Booking Page</a>
+                    </li>
+                    <li *ngIf="isAdmin">
+                        <a routerLink="/admin/reservations" routerLinkActive="active-link" (click)="closeSidebar()">Reservation List</a>
+                    </li>
+                    <li *ngIf="isAdmin">
+                        <a routerLink="/admin/pending" routerLinkActive="active-link" (click)="closeSidebar()">Pending Requests</a>
+                    </li>
+                    <li *ngIf="isAdmin">
+                        <a routerLink="/admin/manage" routerLinkActive="active-link" (click)="closeSidebar()">Manage</a>
+                    </li>
 
-   <li class="logout-item">
-    <button mat-icon-button (click)="logout()"> <mat-icon>exit_to_app</mat-icon> </button>
-  </li>
-</nav>
+                    <li *ngIf="isUser">
+                        <a routerLink="/user/booking" routerLinkActive="active-link" (click)="closeSidebar()">Booking Page</a>
+                    </li>
+                    <li *ngIf="isUser">
+                        <a routerLink="/user/my-bookings" routerLinkActive="active-link" (click)="closeSidebar()">My Bookings</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="logout-item">
+                <button mat-icon-button (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon> Logout
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="sidebar-overlay" [class.open]="isSidebarOpen" (click)="closeSidebar()"></div>
+</ng-container>

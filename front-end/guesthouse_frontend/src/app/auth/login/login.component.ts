@@ -19,7 +19,7 @@ export class LoginComponent {
         const token = res.token;
         this.authService.saveToken(token);
 
-         const role = this.authService.getRoleFromToken(token);
+         const role = this.authService.getRoleFromToken();
 
         if (role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);

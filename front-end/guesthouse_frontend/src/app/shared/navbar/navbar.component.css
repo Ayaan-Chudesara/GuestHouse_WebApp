@@ -42,7 +42,11 @@
  /*  
 }*/
 
+
+
+
 /* Your original .navbar styles */
+/*
 .navbar {
   padding: 12px 24px;
   display: flex;
@@ -54,7 +58,7 @@
   z-index: 1000;
 }
 
-/* Logo Container Styling */
+
 .navbar-logo {
   flex-shrink: 0;
   margin-right: 30px;
@@ -68,7 +72,7 @@
   vertical-align: middle;
 }
 
-/* NEW: Container for the main navigation links */
+
 .nav-links-container {
   display: flex;
   flex-grow: 1;
@@ -76,7 +80,6 @@
 }
 
 
-/* Your original .menu styles - now purely for the UL's internal items */
 .menu {
   display: flex;
   gap: 24px;
@@ -86,13 +89,12 @@
   flex-shrink: 0;
 }
 
-/* Your original .menu li a, .menu li button, .menu li div styles */
-/* Note: The button/div styles below might need adjustment if you only want it for mat-icon-button */
+
 .menu li a,
-.menu li button, /* This now applies to mat-icon-button as well */
+.menu li button, 
 .menu li div {
   color: #ffffff;
-  background: none; /* Keep background none for most links */
+  background: none;
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -104,56 +106,49 @@
   font-weight: normal;
 }
 
-/* Your original hover styles */
 .menu li a:hover,
 .menu li button:hover,
 .menu li div:hover {
   box-shadow: 2px 18px 40px 6px rgba(63,102,255,0.75);
 }
 
-/* Active link styling */
 .menu li a.active-link {
   font-weight: normal;
 }
 
 
-/* MODIFIED: Specific styling for the Logout button (now an icon button) */
 .logout-item {
   flex-shrink: 0;
   margin-left: 30px;
 }
 
-/* Target the mat-icon-button specifically */
-.logout-item button {
-  background: none; /* No background color for the button itself */
+ .logout-item button {
+  background: none; 
   border: none;
-  padding: 8px; /* Standard padding for mat-icon-button */
-  border-radius: 50%; /* Make it circular for a nice hover effect */
-  color: #ffffff; /* Default color for the icon */
+  padding: 8px; 
+  border-radius: 50%; 
+  color: #ffffff; 
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  width: 48px; /* Standard size for mat-icon-button */
-  height: 48px; /* Standard size for mat-icon-button */
-  display: flex; /* Use flex to center the icon inside the button */
+  width: 48px; 
+  height: 48px;
+  display: flex; 
   align-items: center;
   justify-content: center;
-}
+} 
 
-/* Target the icon inside the button */
 .logout-item button mat-icon {
-  font-size: 28px; /* Adjust icon size as needed */
+  font-size: 28px; 
   width: 28px;
   height: 28px;
-  color: #ffffff; /* Color of the icon itself */
+  color: #ffffff; 
 }
 
-/* Hover and active states for the icon button */
 .logout-item button:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Subtle light background on hover */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
+  background-color: rgba(255, 255, 255, 0.1); 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
 }
 
 
-/* --- Responsive Adjustments --- */
 @media (max-width: 992px) {
   .navbar {
     flex-wrap: wrap;
@@ -194,18 +189,18 @@
     text-align: center;
   }
 
-  .logout-item button { /* Target the button within the li */
-    width: 50px; /* Adjust button size for smaller screens */
+  .logout-item button {
+    width: 50px; 
     height: 50px;
-    padding: 0; /* Remove padding if it's set by mat-icon-button */
-    margin: 0 auto; /* Center the button on its own line */
-    display: flex; /* Ensure flex for centering icon */
+    padding: 0; 
+    margin: 0 auto;
+    display: flex; 
     align-items: center;
     justify-content: center;
   }
 
   .logout-item button mat-icon {
-    font-size: 24px; /* Adjust icon size for smaller screens */
+    font-size: 24px;
     width: 24px;
     height: 24px;
   }
@@ -239,4 +234,261 @@
     width: 22px;
     height: 22px;
   }
+}*/
+
+
+/*
+ * This CSS file contains all styling for the sidebar, its toggle button,
+ * its overlay, and the internal navigation links/logo/logout button.
+ * It is meant to be placed directly in src/app/shared/navbar/navbar.component.css
+ */
+
+/* Menu Toggle Button (Hamburger Icon) */
+.menu-toggle-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2100;
+    background-color: #3f66ff;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex; /* Always display */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.menu-toggle-button mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+}
+
+.menu-toggle-button:hover {
+    background-color: #5a80ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+
+/* Sidebar Container (the main sliding panel) */
+.sidebar-container {
+    position: fixed; /* Always fixed */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    transform: translateX(-100%); /* Always initially hidden */
+    transition: transform 0.3s ease;
+    z-index: 2000;
+    background-color: #0b0c1e;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    padding-top: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* When sidebar is open */
+.sidebar-container.open {
+    transform: translateX(0); /* Slides into view when 'open' class is applied */
+}
+
+/* Overlay that covers main content when sidebar is open */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* When overlay is open */
+.sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* --- Internal Navbar Styles (for the <nav> element and its children) --- */
+/* (These remain largely unchanged, as they define the look of the sidebar's contents) */
+.navbar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-shadow: none;
+}
+
+.navbar-logo {
+    flex-shrink: 0;
+    margin-right: 0;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.navbar-logo img {
+    height: 60px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.nav-links-container {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.menu li {
+    width: 100%;
+}
+
+.menu li a,
+.menu li button,
+.menu li div {
+    color: #ffffff; /* Explicitly set text color to white */
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 12px 15px;
+    transition: 0.4s ease;
+    text-decoration: none;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-weight: normal;
+    display: block;
+    text-align: left;
+}
+
+.menu li a:hover,
+.menu li button:hover,
+.menu li div:hover {
+    box-shadow: 2px 18px 40px 6px rgba(63,102,255,0.75);
+    background-color: rgba(63, 102, 255, 0.1);
+}
+
+.menu li a.active-link {
+    font-weight: bold;
+    background-color: rgba(63, 102, 255, 0.2);
+    color: #3f66ff;
+}
+
+.logout-item {
+    flex-shrink: 0;
+    margin-left: 0;
+    margin-top: auto;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.logout-item button {
+    background-color: #3f66ff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #ffffff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: auto;
+    min-width: 150px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1em;
+}
+
+.logout-item button mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #ffffff;
+}
+
+.logout-item button:hover {
+    background-color: #5a80ff;
+    box-shadow: 0 4px 15px rgba(63, 102, 255, 0.4);
+}
+
+
+/* --- Responsive Adjustments (only for button/sidebar size, no "always open") --- */
+/* No special rules for desktop "always open" in this approach */
+
+@media (max-width: 600px) {
+    .menu-toggle-button {
+        top: 15px;
+        left: 15px;
+        width: 44px;
+        height: 44px;
+    }
+    .menu-toggle-button mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+    }
+    .sidebar-container {
+        width: 220px; /* Slightly smaller sidebar on very small screens */
+    }
+    .navbar-logo {
+        margin-bottom: 20px;
+    }
+    .navbar-logo img {
+        height: 50px;
+    }
+    .menu {
+        gap: 10px;
+    }
+    .menu li a,
+    .menu li button,
+    .menu li div {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+    .logout-item {
+        padding: 15px;
+    }
+    .logout-item button {
+        min-width: 130px;
+        padding: 10px 15px;
+    }
+    .logout-item button mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
 }
