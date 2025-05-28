@@ -15,4 +15,6 @@ public class RoomDTO {
     private String roomType;
     private Long guestHouseId;
     private String guestHouseName;
+    private Integer numberOfBeds;
+    private Double pricePerNight;
 }

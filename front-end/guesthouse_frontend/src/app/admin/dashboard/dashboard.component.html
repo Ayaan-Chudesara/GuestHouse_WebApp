@@ -1,5 +1,4 @@
-<div class="dashboard-container">
-  <!-- Dashboard Cards Section -->
+<!--
   <div class="card-grid">
     <div class="dashboard-card">
       <div class="card-header">
@@ -42,9 +41,6 @@
     </div>
   </div>
 
- <!-- Scheduler + Total Beds Side by Side -->
-<div class="side-section-group">
-  <!-- Scheduler Section -->
   <div class="separate-section small-section">
     <h2>Scheduler</h2>
     <p>{{ todayMonthYear }}</p>
@@ -53,7 +49,6 @@
     </mat-card>
   </div>
 
-  <!-- Total Beds Section -->
   <div class="separate-section small-section">
     <h2>Total Beds Between Date Range</h2>
     <div class="date-inputs">
@@ -79,4 +74,79 @@
     </div>
   </div>
 </div>
+-->
 
+<div class="dashboard-container">
+  <div class="card-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Available Beds</span> <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ availableBeds }}</div> </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Total Bookings</span> <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ totalBookings }}</div> </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Pending Request</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ pendingRequests }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Check-In</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ checkIns }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <span>Check-Out</span>
+        <span>{{ todayDate }}</span>
+      </div>
+      <div class="card-body">{{ checkOuts }}</div>
+    </div>
+  </div>
+
+  <div class="side-section-group">
+    <div class="separate-section small-section">
+      <h2>Scheduler</h2>
+      <p>{{ todayMonthYear }}</p>
+      <mat-card>
+        <mat-calendar></mat-calendar>
+      </mat-card>
+    </div>
+
+    <div class="separate-section small-section">
+      <h2>Total Beds Between Date Range</h2>
+      <div class="date-inputs">
+        <mat-form-field appearance="fill">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="onDateRangeSelected()">Search</button>
+      </div>
+
+      <div *ngIf="totalBeds !== null" class="total-beds-display">
+        Total Beds: <strong>{{ totalBeds }}</strong>
+      </div>
+    </div>
+  </div>
+</div>

@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
     // This method is for specific registration logic, often used in auth flows
     @Override
     @Transactional // Ensures the operation is atomic
-    public String registerUser(RegisterRequestDTO registerRequest) { // Changed parameter type
+    public String registerUser(RegisterRequestDTO registerRequest) {
         // Password validation (can be handled by @NotBlank in DTO)
         if (registerRequest.getPassword() == null || registerRequest.getPassword().isBlank()) {
             return "Password cannot be empty.";
@@ -169,5 +169,10 @@ public class UserServiceImpl implements UserService {
 
         userRepo.save(user);
         return "User registered successfully.";
+    }
+
+    @Override
+    public boolean verifyUserExists(Long userId) {
+        return userRepo.existsById(userId);
     }
 }

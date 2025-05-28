@@ -1,22 +1,35 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GuestHouse } from 'src/app/core/models/guesthouse.model';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GuesthouseService {
-private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spring Boot app runs on a different port or path
+  private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spring Boot app runs on a different port or path
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
   /**
    * Fetches all guesthouses from the backend.
    * @returns An Observable of a list of GuestHouse objects.
    */
   getAllGuestHouses(): Observable<GuestHouse[]> {
-    return this.http.get<GuestHouse[]>(this.apiUrl);
+    const headers = this.getAuthHeaders();
+    return this.http.get<GuestHouse[]>(this.apiUrl, { headers });
   }
 
   /**
@@ -25,7 +38,8 @@ private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spri
    * @returns An Observable of a single GuestHouse object.
    */
   getGuestHouseById(id: number): Observable<GuestHouse> {
-    return this.http.get<GuestHouse>(`${this.apiUrl}/${id}`);
+    const headers = this.getAuthHeaders();
+    return this.http.get<GuestHouse>(`${this.apiUrl}/${id}`, { headers });
   }
 
   /**
@@ -34,7 +48,8 @@ private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spri
    * @returns An Observable of the created GuestHouse object.
    */
   createGuestHouse(guesthouse: GuestHouse): Observable<GuestHouse> {
-    return this.http.post<GuestHouse>(this.apiUrl, guesthouse);
+    const headers = this.getAuthHeaders();
+    return this.http.post<GuestHouse>(this.apiUrl, guesthouse, { headers });
   }
 
   /**
@@ -44,7 +59,8 @@ private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spri
    * @returns An Observable of the updated GuestHouse object.
    */
   updateGuestHouse(id: number, guesthouse: GuestHouse): Observable<GuestHouse> {
-    return this.http.put<GuestHouse>(`${this.apiUrl}/${id}`, guesthouse);
+    const headers = this.getAuthHeaders();
+    return this.http.put<GuestHouse>(`${this.apiUrl}/${id}`, guesthouse, { headers });
   }
 
   /**
@@ -53,6 +69,7 @@ private apiUrl = 'http://localhost:8080/api/guesthouses'; // Adjust if your Spri
    * @returns An Observable of a boolean indicating success.
    */
   deleteGuestHouse(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+    const headers = this.getAuthHeaders();
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`, { headers });
   }
 }

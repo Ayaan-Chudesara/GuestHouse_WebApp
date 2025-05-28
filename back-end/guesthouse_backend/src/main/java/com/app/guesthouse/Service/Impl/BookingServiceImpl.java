@@ -74,23 +74,52 @@ public class BookingServiceImpl implements BookingService {
         dto.setPurpose(booking.getPurpose());
         dto.setStatus(booking.getStatus());
         dto.setCreatedAt(booking.getCreatedAt());
+        dto.setNumberOfGuests(booking.getNumberOfGuests());
 
         dto.setCheckInDate(booking.getBookingDate()); // Set DTO checkInDate from entity's bookingDate
         dto.setCheckOutDate(booking.getBookingDate().plusDays(booking.getDurationDays())); // Calculate checkOutDate for DTO
-
 
         return dto;
     }
 
     @Transactional
     public BookingDTO createBooking(BookingDTO bookingDTO) {
-        // 1. Fetch User
+        // 1. Validate input and log request details
+        System.out.println("Creating booking with details: " + 
+            "userId=" + bookingDTO.getUserId() + ", " +
+            "roomId=" + bookingDTO.getRoomId() + ", " +
+            "checkInDate=" + bookingDTO.getCheckInDate() + ", " +
+            "checkOutDate=" + bookingDTO.getCheckOutDate() + ", " +
+            "numberOfGuests=" + bookingDTO.getNumberOfGuests());
+
+        if (bookingDTO.getRoomId() == null) {
+            throw new IllegalArgumentException("Room ID is required for booking.");
+        }
+        if (bookingDTO.getUserId() == null) {
+            throw new IllegalArgumentException("User ID is required for booking.");
+        }
+        if (bookingDTO.getNumberOfGuests() == null || bookingDTO.getNumberOfGuests() < 1) {
+            throw new IllegalArgumentException("Number of guests must be at least 1.");
+        }
+
+        // 2. Verify user exists and fetch user details
+        System.out.println("Checking if user exists with ID: " + bookingDTO.getUserId());
+        boolean userExists = userRepo.existsById(bookingDTO.getUserId());
+        if (!userExists) {
+            throw new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId() + ". Please ensure you are logged in correctly.");
+        }
+
+        // 3. Fetch User
         User user = userRepo.findById(bookingDTO.getUserId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId()));
+        System.out.println("Found user: " + user.getName() + " (ID: " + user.getId() + ")");
 
-        // 2. Validate Dates and Calculate Duration
+        // 4. Validate Dates and Calculate Duration
         if (bookingDTO.getCheckInDate() == null || bookingDTO.getCheckOutDate() == null) {
             throw new IllegalArgumentException("Check-in and Check-out dates are required for booking creation.");
+        }
+        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Check-in date cannot be in the past.");
         }
         if (bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate())) {
             throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
@@ -100,53 +129,70 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalArgumentException("Booking duration must be at least one day.");
         }
 
-        // --- MODIFIED LOGIC: Find an available Bed within the requested Room ---
-        // 3. Ensure the Room exists
+        // 5. Ensure the Room exists and validate capacity
         Room room = roomRepo.findById(bookingDTO.getRoomId())
                 .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + bookingDTO.getRoomId()));
+        System.out.println("Found room: " + room.getRoomNo() + " (ID: " + room.getId() + ")");
 
-        // 4. Search for an AVAILABLE Bed within this specific Room for the given dates
-        List<Bed> availableBedsInRoom = bedRepo.findFirstAvailableBedInRoomForDates( // Call the new method
+        if (bookingDTO.getNumberOfGuests() > room.getNumberOfBeds()) {
+            throw new IllegalArgumentException("Number of guests (" + bookingDTO.getNumberOfGuests() + 
+                ") exceeds room capacity (" + room.getNumberOfBeds() + ").");
+        }
+
+        // 6. Search for an AVAILABLE Bed within this specific Room for the given dates
+        List<Bed> availableBedsInRoom = bedRepo.findFirstAvailableBedInRoomForDates(
                 room.getId(),
                 bookingDTO.getCheckInDate(),
                 bookingDTO.getCheckOutDate()
         );
 
         if (availableBedsInRoom.isEmpty()) {
-            throw new IllegalStateException("No available beds found in Room ID: " + room.getId() + " for the requested dates. Please select a different room or dates.");
+            throw new IllegalStateException(
+                "No available beds found in Room " + room.getRoomNo() + 
+                " for the dates " + bookingDTO.getCheckInDate() + 
+                " to " + bookingDTO.getCheckOutDate() + 
+                ". Please select different dates or a different room."
+            );
         }
 
         // Select the first available bed found
         Bed selectedBed = availableBedsInRoom.get(0);
+        System.out.println("Selected bed: " + selectedBed.getBedNo() + " (ID: " + selectedBed.getId() + ")");
 
-        // --- End MODIFIED LOGIC ---
-
-
-        // 5. Create Booking entity
+        // 7. Create Booking entity
         Booking booking = new Booking();
         booking.setUser(user);
-        booking.setBed(selectedBed); // Use the selected Bed
-        booking.setBookingDate(bookingDTO.getCheckInDate()); // Assuming bookingDate in entity stores checkInDate
+        booking.setBed(selectedBed);
+        booking.setBookingDate(bookingDTO.getCheckInDate());
         booking.setDurationDays((int) durationDays);
-        booking.setPurpose(bookingDTO.getPurpose());
-        booking.setStatus(Booking.Status.PENDING); // Default to PENDING for user-initiated bookings
+        booking.setPurpose(bookingDTO.getPurpose() != null ? bookingDTO.getPurpose() : "");
+        booking.setStatus(Booking.Status.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
+        booking.setNumberOfGuests(bookingDTO.getNumberOfGuests());
 
-        // 6. Update Bed Status
-        selectedBed.setStatus(Bed.Status.BOOKED); // Mark selected bed as booked
+        // 8. Update Bed Status
+        selectedBed.setStatus(Bed.Status.BOOKED);
         bedRepo.save(selectedBed);
+        System.out.println("Updated bed status to BOOKED");
 
-        // 7. Save Booking
-        Booking saved = bookingRepo.save(booking);
-
-        // 8. Send Notification
+        // 9. Save Booking
         try {
-            mailService.sendBookingNotification(saved.getUser().getEmail(), saved);
-        } catch (Exception e) {
-            System.out.println("Email sending failed for booking " + saved.getId() + ": " + e.getMessage());
-        }
+            Booking saved = bookingRepo.save(booking);
+            System.out.println("Successfully created booking with ID: " + saved.getId());
+            
+            // 10. Send Notification
+            try {
+                mailService.sendBookingNotification(saved.getUser().getEmail(), saved);
+            } catch (Exception e) {
+                System.err.println("Email sending failed for booking " + saved.getId() + ": " + e.getMessage());
+            }
 
-        return mapToDTO(saved);
+            return mapToDTO(saved);
+        } catch (Exception e) {
+            System.err.println("Error saving booking: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 
@@ -241,71 +287,102 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public void createBookingAsAdmin(AdminBookingRequestDTO request) {
-        // This method relies on the BedRepo.findAvailableBedsByCriteria
-        // It's robust for admin creating bookings based on broader room/guest house criteria.
-        // No changes needed here based on the current discussion.
-
-        // 1. Find or create User
-        User user = userRepo.findByEmail(request.getGuestEmail())
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setName(request.getGuestName());
-                    newUser.setEmail(request.getGuestEmail());
-                    newUser.setPhone("N/A");
-                    newUser.setPassword("default_hashed_password"); // Ensure secure hashing here
-                    newUser.setRole(User.Role.USER);
-                    return userRepo.save(newUser);
-                });
-
-        // 2. Calculate duration and validate dates
-        if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
-            throw new IllegalArgumentException("Check-in and Check-out dates are required.");
-        }
-        if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
-            throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
-        }
-        long durationDays = ChronoUnit.DAYS.between(request.getCheckInDate(), request.getCheckOutDate());
-        if (durationDays == 0) {
-            throw new IllegalArgumentException("Booking duration must be at least one day.");
-        }
-
-        // 3. Find a single suitable and AVAILABLE Bed
-        List<Bed> candidateBeds = bedRepo.findAvailableBedsByCriteria(
-                request.getGuestHouseId(),
-                request.getRoomType(),
-                request.getNumberOfBeds(), // This refers to the room's total capacity for a group, not a single bed booking
-                request.getCheckInDate(),
-                request.getCheckOutDate()
-        );
-
-        if (candidateBeds.isEmpty()) {
-            throw new RuntimeException("No available bed found for the specified criteria and dates.");
-        }
-
-        Bed selectedBed = candidateBeds.get(0); // Takes the first one
-
-        // 4. Create Booking
-        Booking booking = new Booking();
-        booking.setUser(user);
-        booking.setBed(selectedBed);
-        booking.setBookingDate(request.getCheckInDate());
-        booking.setDurationDays((int) durationDays);
-        booking.setPurpose(request.getPurpose());
-        booking.setCreatedAt(LocalDateTime.now());
-
-        booking.setStatus(Booking.Status.APPROVED); // Default to APPROVED for admin bookings
-
-        // 5. Update Bed Status to BOOKED
-        selectedBed.setStatus(Bed.Status.BOOKED);
-        bedRepo.save(selectedBed);
-
-        // 6. Save Booking
-        bookingRepo.save(booking);
-
         try {
-            mailService.sendBookingNotification(user.getEmail(), booking);
+            // 1. Validate request
+            if (request.getGuestName() == null || request.getGuestName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Guest name is required");
+            }
+            if (request.getGuestEmail() == null || request.getGuestEmail().trim().isEmpty()) {
+                throw new IllegalArgumentException("Guest email is required");
+            }
+            if (request.getGuestHouseId() == null) {
+                throw new IllegalArgumentException("Guesthouse ID is required");
+            }
+            if (request.getRoomType() == null || request.getRoomType().trim().isEmpty()) {
+                throw new IllegalArgumentException("Room type is required");
+            }
+            if (request.getNumberOfBeds() <= 0) {
+                throw new IllegalArgumentException("Number of beds must be greater than 0");
+            }
+
+            // 2. Find or create User
+            User user = userRepo.findByEmail(request.getGuestEmail())
+                    .orElseGet(() -> {
+                        User newUser = new User();
+                        newUser.setName(request.getGuestName());
+                        newUser.setEmail(request.getGuestEmail());
+                        newUser.setPhone("N/A");
+                        newUser.setPassword("default_hashed_password"); // Ensure secure hashing here
+                        newUser.setRole(User.Role.USER);
+                        return userRepo.save(newUser);
+                    });
+
+            // 3. Calculate duration and validate dates
+            if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
+                throw new IllegalArgumentException("Check-in and Check-out dates are required.");
+            }
+            if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
+                throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
+            }
+            if (request.getCheckInDate().isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("Check-in date cannot be in the past.");
+            }
+            long durationDays = ChronoUnit.DAYS.between(request.getCheckInDate(), request.getCheckOutDate());
+            if (durationDays == 0) {
+                throw new IllegalArgumentException("Booking duration must be at least one day.");
+            }
+
+            // 4. Find a suitable and AVAILABLE Bed
+            List<Bed> candidateBeds = bedRepo.findAvailableBedsByCriteria(
+                    request.getGuestHouseId(),
+                    request.getRoomType(),
+                    request.getNumberOfBeds(),
+                    request.getCheckInDate(),
+                    request.getCheckOutDate()
+            );
+
+            if (candidateBeds.isEmpty()) {
+                throw new IllegalStateException(
+                    String.format("No available beds found for guesthouse ID %d, room type %s, capacity %d, dates %s to %s",
+                        request.getGuestHouseId(),
+                        request.getRoomType(),
+                        request.getNumberOfBeds(),
+                        request.getCheckInDate(),
+                        request.getCheckOutDate())
+                );
+            }
+
+            Bed selectedBed = candidateBeds.get(0);
+
+            // 5. Create Booking
+            Booking booking = new Booking();
+            booking.setUser(user);
+            booking.setBed(selectedBed);
+            booking.setBookingDate(request.getCheckInDate());
+            booking.setDurationDays((int) durationDays);
+            booking.setPurpose(request.getPurpose());
+            booking.setCreatedAt(LocalDateTime.now());
+            booking.setStatus(Booking.Status.APPROVED); // Default to APPROVED for admin bookings
+
+            // 6. Update Bed Status to BOOKED
+            selectedBed.setStatus(Bed.Status.BOOKED);
+            bedRepo.save(selectedBed);
+
+            // 7. Save Booking
+            Booking savedBooking = bookingRepo.save(booking);
+
+            // 8. Send email notification
+            try {
+                mailService.sendBookingNotification(user.getEmail(), savedBooking);
+            } catch (Exception e) {
+                System.err.println("Email sending failed for admin-created booking: " + e.getMessage());
+                // Don't throw here, as the booking was successful
+            }
         } catch (Exception e) {
-            System.err.println("Email sending failed for admin-created booking: " + e.getMessage());
+            // Log the full error for debugging
+            System.err.println("Error in createBookingAsAdmin: " + e.getMessage());
+            e.printStackTrace();
+            throw e; // Re-throw to maintain the transaction
         }
     }
 }

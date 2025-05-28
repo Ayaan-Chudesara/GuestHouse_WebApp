@@ -34,6 +34,9 @@ public class Booking {
     @Column(nullable = false)
     private Integer durationDays; // duration of stay in days
 
+    @Column(nullable = false)
+    private Integer numberOfGuests; // number of guests for this booking
+
     private String purpose;
 
     @Enumerated(EnumType.STRING)  // to store enum as string

@@ -10,11 +10,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/verify/{userId}")
+    public ResponseEntity<Boolean> verifyUser(@PathVariable Long userId) {
+        try {
+            boolean exists = userService.verifyUserExists(userId);
+            return ResponseEntity.ok(exists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GetMapping("/all")
     private ResponseEntity<List<UserDTO>> getAllUsers() {

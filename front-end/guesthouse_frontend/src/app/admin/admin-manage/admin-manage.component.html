@@ -60,6 +60,8 @@
             <th>ID</th>
             <th>Room No.</th>
             <th>Room Type</th>
+            <th>Beds</th>
+            <th>Price/Night</th>
             <th>Guesthouse</th>
             <th>Actions</th>
           </tr>
@@ -69,6 +71,8 @@
             <td>{{ room.id }}</td>
             <td>{{ room.roomNo }}</td>
             <td>{{ room.roomType }}</td>
+            <td>{{ room.numberOfBeds }}</td>
+            <td>${{ room.pricePerNight | number:'1.2-2' }}</td>
             <td>{{ room.guestHouseName }}</td>
             <td>
               <button (click)="onEditRoom(room)">Edit</button>
@@ -92,6 +96,14 @@
         <div class="form-group">
           <label for="roomType">Room Type:</label>
           <input type="text" id="roomType" [(ngModel)]="selectedRoom.roomType" name="roomType" required>
+        </div>
+        <div class="form-group">
+          <label for="numberOfBeds">Number of Beds:</label>
+          <input type="number" id="numberOfBeds" [(ngModel)]="selectedRoom.numberOfBeds" name="numberOfBeds" required min="1">
+        </div>
+        <div class="form-group">
+          <label for="pricePerNight">Price per Night ($):</label>
+          <input type="number" id="pricePerNight" [(ngModel)]="selectedRoom.pricePerNight" name="pricePerNight" required min="0" step="0.01">
         </div>
         <div class="form-group">
           <label for="roomGuestHouse">Guesthouse:</label>

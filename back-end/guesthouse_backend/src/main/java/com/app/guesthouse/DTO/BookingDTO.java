@@ -24,6 +24,7 @@ public class BookingDTO {
     private String purpose;
     private Booking.Status status; // Use the correct enum
     private LocalDateTime createdAt;
+    private Integer numberOfGuests; // Number of guests for this booking
 
     // Derived user details from Booking.user
     private Long userId; // Include user ID if needed for frontend actions

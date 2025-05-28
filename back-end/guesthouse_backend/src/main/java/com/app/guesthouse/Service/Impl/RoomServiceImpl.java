@@ -27,6 +27,8 @@ public class RoomServiceImpl implements RoomService {
         Room room = new Room();
         room.setRoomNo(roomDTO.getRoomNo());
         room.setRoomType(roomDTO.getRoomType());
+        room.setNumberOfBeds(roomDTO.getNumberOfBeds());
+        room.setPricePerNight(roomDTO.getPricePerNight());
 
         GuestHouse guestHouse = guestHouseRepository.findById(roomDTO.getGuestHouseId())
                 .orElseThrow(() -> new EntityNotFoundException("GuestHouse not found"));
@@ -59,6 +61,8 @@ public class RoomServiceImpl implements RoomService {
 
         room.setRoomNo(roomDTO.getRoomNo());
         room.setRoomType(roomDTO.getRoomType());
+        room.setNumberOfBeds(roomDTO.getNumberOfBeds());
+        room.setPricePerNight(roomDTO.getPricePerNight());
 
         GuestHouse guestHouse = guestHouseRepository.findById(roomDTO.getGuestHouseId())
                 .orElseThrow(() -> new EntityNotFoundException("GuestHouse not found"));
@@ -84,13 +88,13 @@ public class RoomServiceImpl implements RoomService {
         dto.setRoomType(room.getRoomType());
         dto.setGuestHouseId(room.getGuestHouse().getId());
         dto.setGuestHouseName(room.getGuestHouse().getName());
+        dto.setNumberOfBeds(room.getNumberOfBeds());
+        dto.setPricePerNight(room.getPricePerNight());
         return dto;
     }
 
     @Override
     public List<String> getDistinctRoomTypes() {
-
-        // Now that RoomRepo has findDistinctRoomTypes(), use it directly!
         return roomRepository.findDistinctRoomTypes();
     }
 }

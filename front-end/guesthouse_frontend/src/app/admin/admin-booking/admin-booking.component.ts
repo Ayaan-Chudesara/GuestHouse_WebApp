@@ -100,21 +100,32 @@ export class AdminBookingComponent {
 
     const formValue = this.bookingForm.value;
 
+    // Format dates to match LocalDate format (YYYY-MM-DD)
+    const checkInDate = new Date(formValue.checkInDate);
+    const checkOutDate = new Date(formValue.checkOutDate);
+
+    // Validate dates
+    if (checkInDate >= checkOutDate) {
+      this.snackBar.open('Check-out date must be after check-in date.', 'Close', { duration: 3000 });
+      return;
+    }
+
     const adminBookingRequest = {
       guestName: formValue.guestName,
       guestEmail: formValue.guestEmail,
-      checkInDate: new Date(formValue.checkInDate).toISOString().split('T')[0],
-      checkOutDate: new Date(formValue.checkOutDate).toISOString().split('T')[0],
+      checkInDate: checkInDate.toISOString().split('T')[0],
+      checkOutDate: checkOutDate.toISOString().split('T')[0],
       guestHouseId: formValue.guestHouse,
       roomType: formValue.roomType,
       numberOfBeds: formValue.numberOfBeds,
-      purpose: formValue.purpose
+      purpose: formValue.purpose || ''
     };
 
     console.log('Sending Admin Booking Request to backend:', adminBookingRequest);
 
-    this.adminPanelService.createBooking(adminBookingRequest).subscribe({ // Use adminPanelService
+    this.adminPanelService.createBooking(adminBookingRequest).subscribe({
       next: (response) => {
+        console.log('Booking response:', response);
         this.snackBar.open('Booking created successfully!', 'Close', { duration: 3000 });
         this.bookingForm.reset();
         this.loadDashboardData(); // Refresh dashboard stats and scheduler data
@@ -124,7 +135,8 @@ export class AdminBookingComponent {
       },
       error: (err) => {
         console.error('Error creating booking:', err);
-        this.snackBar.open('Failed to create booking: ' + (err.error?.message || 'Server error'), 'Close', { duration: 5000 });
+        const errorMessage = err.error || err.message || 'Server error';
+        this.snackBar.open('Failed to create booking: ' + errorMessage, 'Close', { duration: 5000 });
       }
     });
   }

@@ -45,24 +45,12 @@ public class SecurityConfig {
                 // Configure authorization for HTTP requests
                 .authorizeHttpRequests(auth -> auth
                         // Allow /api/auth/** endpoints (like /login, /register) for everyone
-                        // These are handled by the AuthenticationManager and should not require JWTs themselves
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Allow specific API endpoints for certain methods if needed, for example:
-                        // .requestMatchers(HttpMethod.GET, "/api/public-data").permitAll()
-
-                        // --- IMPORTANT: Decide if Admin endpoints should be public or protected ---
-                        // If these are truly ADMIN endpoints, they should NOT be permitAll().
-                        // They should typically require authentication and/or specific roles.
-                        // For typical admin panel, REMOVE these permitAll() lines below.
-                        // If removed, they will fall under .anyRequest().authenticated()
-                        // and then @PreAuthorize("hasRole('ADMIN')") on controller methods will handle roles.
-                        // Current state: THEY ARE PERMITALL, meaning anyone can access them.
-                        .requestMatchers("/api/admin/dashboard/**").permitAll() // <--- REVIEW THIS!
-                        .requestMatchers("/api/admin/bookings").permitAll()      // <--- REVIEW THIS!
-                        // Example of how to protect admin endpoints with a role:
-                        // .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // Ensure your @PreAuthorize annotations on controller methods are consistent.
-
+                        // Admin endpoints require ADMIN role
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // User endpoints require authentication
+                        .requestMatchers("/api/bookings/**").authenticated()
+                        .requestMatchers("/api/rooms/**").authenticated()
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )

@@ -78,10 +78,20 @@ export class AuthService {
 
   public getUserIdFromToken(): number | null {
     const decoded = this.getDecodedToken();
-    if (decoded && decoded.userId) { // Assuming 'userId' is the claim name in your JWT
-      return decoded.userId;
+    if (decoded) {
+      // Check for both possible claim names
+      const userId = decoded.userId || decoded.sub || decoded.id;
+      if (userId) {
+        // Ensure it's a number
+        const numericId = Number(userId);
+        if (!isNaN(numericId)) {
+          return numericId;
+        }
+        console.warn("User ID from token is not a valid number:", userId);
+        return null;
+      }
     }
-    console.warn("JWT token does not contain a 'userId' claim.");
+    console.warn("JWT token does not contain a valid user ID claim.");
     return null;
   }
 

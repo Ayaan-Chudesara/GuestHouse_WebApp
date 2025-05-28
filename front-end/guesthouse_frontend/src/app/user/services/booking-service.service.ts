@@ -9,8 +9,9 @@ import { Room } from 'src/app/core/models/room.model';
   providedIn: 'root'
 })
 export class BookingServiceService {
- private apiUrl = 'http://localhost:8080/api/bookings'; // <--- Adjust your Spring Boot backend URL here
-  private roomApiUrl = 'http://localhost:8080/api/rooms'; // <--- Adjust your Spring Boot backend URL for Rooms here
+  private apiUrl = 'http://localhost:8080/api/bookings';
+  private roomApiUrl = 'http://localhost:8080/api/rooms';
+  private userApiUrl = 'http://localhost:8080/api/users';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -29,7 +30,7 @@ export class BookingServiceService {
    */
   createBooking(bookingRequest: BookingRequest): Observable<Booking> {
     const headers = this.getAuthHeaders();
-    return this.http.post<Booking>(this.apiUrl, bookingRequest, { headers });
+    return this.http.post<Booking>(`${this.apiUrl}/create`, bookingRequest, { headers });
   }
 
   /**
@@ -40,10 +41,8 @@ export class BookingServiceService {
    * @returns An Observable of an array of Room objects.
    */
   getAllRooms(): Observable<Room[]> {
-    // Note: If this endpoint requires authentication, add headers:
-    // const headers = this.getAuthHeaders();
-    // return this.http.get<Room[]>(this.roomApiUrl, { headers });
-    return this.http.get<Room[]>(this.roomApiUrl); // Assuming this endpoint doesn't require auth for simple retrieval
+    const headers = this.getAuthHeaders();
+    return this.http.get<Room[]>(this.roomApiUrl, { headers });
   }
 
   /**
@@ -85,6 +84,16 @@ export class BookingServiceService {
   deleteBooking(bookingId: number): Observable<void> {
     const headers = this.getAuthHeaders();
     return this.http.delete<void>(`${this.apiUrl}/${bookingId}`, { headers });
+  }
+
+  /**
+   * Verifies if a user exists in the database
+   * @param userId The ID of the user to verify
+   * @returns An Observable of boolean indicating if the user exists
+   */
+  verifyUser(userId: number): Observable<boolean> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<boolean>(`${this.userApiUrl}/verify/${userId}`, { headers });
   }
 
   // You might need more methods depending on your backend API, e.g.:

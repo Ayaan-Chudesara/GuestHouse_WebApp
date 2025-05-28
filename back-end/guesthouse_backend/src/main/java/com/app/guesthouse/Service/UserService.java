@@ -12,4 +12,5 @@ public interface UserService {
     void deleteUser(Long id);
     UserDTO updateUser(Long id, UserDTO dto);
     String registerUser(RegisterRequestDTO registerRequest);
+    boolean verifyUserExists(Long userId);
 }
