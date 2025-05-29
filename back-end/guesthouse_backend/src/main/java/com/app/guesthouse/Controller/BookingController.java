@@ -30,19 +30,41 @@ public class BookingController {
         this.userService = userService;
     }
 
+    // Helper class for error responses
+    private static class ErrorResponse {
+        private final String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
     // Endpoint for regular user-initiated booking (status defaults to PENDING in service)
     @PostMapping("/create") // Added "/create" to distinguish from admin create
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
+            System.out.println("Received booking request: " + bookingDTO); // Log the full DTO
             BookingDTO created = bookingService.createBooking(bookingDTO);
             return new ResponseEntity<>(created, HttpStatus.CREATED); // 201 Created
         } catch (NoSuchElementException e) { // User or Bed not found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            System.err.println("Resource not found error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(e.getMessage()));
         } catch (IllegalArgumentException | IllegalStateException e) { // Invalid dates, bed unavailable, etc.
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Or return e.getMessage()
+            System.err.println("Validation error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(e.getMessage()));
         } catch (Exception e) {
             System.err.println("Error creating booking: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace(); // Add stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("An unexpected error occurred while creating the booking: " + e.getMessage()));
         }
     }
 

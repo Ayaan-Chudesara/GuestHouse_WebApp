@@ -21,7 +21,7 @@ public class Booking {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY) // A booking is made by one user
-    @JoinColumn(name = "user_id", nullable = false) // foreign key column and not null
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_booking_user")) // foreign key column and not null
     private User user;  //references user entity
 
     @OneToOne(fetch = FetchType.LAZY) // <--- CONFIRMED: One booking is for one specific bed

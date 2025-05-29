@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "user") // Good practice to pluralize table names
+@Table(name = "user") // Keep it as "user" since that's your existing table
 @Data // Lombok: Generates getters, setters, equals, hashCode, toString
 @NoArgsConstructor // Lombok: Generates a no-argument constructor
 @AllArgsConstructor // Lombok: Generates a constructor with all fields

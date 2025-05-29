@@ -42,8 +42,8 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             "   WHERE bo.bed_id = b.id " +
             "   AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
             "   AND (" +
-            "       bo.booking_date <= :checkOutDate " +
-            "       AND DATE_ADD(bo.booking_date, INTERVAL bo.duration_days DAY) >= :checkInDate" +
+            "       bo.booking_date < :checkOutDate " +
+            "       AND DATE_ADD(bo.booking_date, INTERVAL bo.duration_days DAY) > :checkInDate" +
             "   )" +
             ")", nativeQuery = true)
     List<Bed> findAvailableBedsByCriteria(
@@ -62,8 +62,8 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             "   WHERE bo.bed_id = b.id " +
             "   AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
             "   AND (" +
-            "       bo.booking_date <= :checkOutDate " +
-            "       AND DATE_ADD(bo.booking_date, INTERVAL bo.duration_days DAY) >= :checkInDate" +
+            "       bo.booking_date < :checkOutDate " +
+            "       AND DATE_ADD(bo.booking_date, INTERVAL bo.duration_days DAY) > :checkInDate" +
             "   )" +
             ") LIMIT 1", nativeQuery = true)
     List<Bed> findFirstAvailableBedInRoomForDates(

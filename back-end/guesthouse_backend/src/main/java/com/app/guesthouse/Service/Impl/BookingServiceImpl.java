@@ -118,15 +118,25 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDTO.getCheckInDate() == null || bookingDTO.getCheckOutDate() == null) {
             throw new IllegalArgumentException("Check-in and Check-out dates are required for booking creation.");
         }
-        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Check-in date cannot be in the past.");
+
+        LocalDate today = LocalDate.now();
+        LocalDate checkInDate = bookingDTO.getCheckInDate();
+        LocalDate checkOutDate = bookingDTO.getCheckOutDate();
+
+        // Validate check-in date
+        if (checkInDate.isBefore(today)) {
+            throw new IllegalArgumentException("Check-in date cannot be in the past. Selected: " + checkInDate + ", Today: " + today);
         }
-        if (bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate())) {
-            throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
+
+        // Validate check-out date
+        if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
+            throw new IllegalArgumentException("Check-out date must be after check-in date. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
         }
-        long durationDays = ChronoUnit.DAYS.between(bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate());
+
+        // Calculate duration
+        long durationDays = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
         if (durationDays == 0) {
-            throw new IllegalArgumentException("Booking duration must be at least one day.");
+            throw new IllegalArgumentException("Booking duration must be at least one day. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
         }
 
         // 5. Ensure the Room exists and validate capacity
@@ -142,15 +152,15 @@ public class BookingServiceImpl implements BookingService {
         // 6. Search for an AVAILABLE Bed within this specific Room for the given dates
         List<Bed> availableBedsInRoom = bedRepo.findFirstAvailableBedInRoomForDates(
                 room.getId(),
-                bookingDTO.getCheckInDate(),
-                bookingDTO.getCheckOutDate()
+                checkInDate,
+                checkOutDate
         );
 
         if (availableBedsInRoom.isEmpty()) {
             throw new IllegalStateException(
                 "No available beds found in Room " + room.getRoomNo() + 
-                " for the dates " + bookingDTO.getCheckInDate() + 
-                " to " + bookingDTO.getCheckOutDate() + 
+                " for the dates " + checkInDate + 
+                " to " + checkOutDate + 
                 ". Please select different dates or a different room."
             );
         }
@@ -163,9 +173,9 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setBed(selectedBed);
-        booking.setBookingDate(bookingDTO.getCheckInDate());
+        booking.setBookingDate(checkInDate);
         booking.setDurationDays((int) durationDays);
-        booking.setPurpose(bookingDTO.getPurpose() != null ? bookingDTO.getPurpose() : "");
+        booking.setPurpose(bookingDTO.getPurpose());
         booking.setStatus(Booking.Status.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
         booking.setNumberOfGuests(bookingDTO.getNumberOfGuests());
@@ -363,6 +373,13 @@ public class BookingServiceImpl implements BookingService {
             booking.setPurpose(request.getPurpose());
             booking.setCreatedAt(LocalDateTime.now());
             booking.setStatus(Booking.Status.APPROVED); // Default to APPROVED for admin bookings
+            
+            // Set numberOfGuests to numberOfBeds if not provided
+            int numberOfGuests = request.getNumberOfGuests();
+            if (numberOfGuests <= 0) {
+                numberOfGuests = request.getNumberOfBeds();
+            }
+            booking.setNumberOfGuests(numberOfGuests);
 
             // 6. Update Bed Status to BOOKED
             selectedBed.setStatus(Bed.Status.BOOKED);

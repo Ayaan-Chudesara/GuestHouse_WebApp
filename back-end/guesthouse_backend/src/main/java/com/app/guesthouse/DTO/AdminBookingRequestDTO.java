@@ -19,5 +19,6 @@ public class AdminBookingRequestDTO {
     private Long guestHouseId;
     private String roomType;   // e.g.,single , double
     private int numberOfBeds;
+    private int numberOfGuests;
     private String purpose;
 }
