@@ -4,10 +4,12 @@ import com.app.guesthouse.DTO.RoomDTO;
 import com.app.guesthouse.Service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -67,6 +69,34 @@ public class RoomController {
         try {
             roomService.deleteRoom(id);
             return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // 🔍 Search Available Rooms
+    @GetMapping("/available")
+    public ResponseEntity<List<RoomDTO>> searchAvailableRooms(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            @RequestParam(required = false) Long guestHouseId,
+            @RequestParam(required = false) String roomType,
+            @RequestParam(required = false) Integer numberOfGuests) {
+        try {
+            List<RoomDTO> availableRooms = roomService.searchAvailableRooms(
+                checkInDate, checkOutDate, guestHouseId, roomType, numberOfGuests);
+            return ResponseEntity.ok(availableRooms);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // 📋 Get Room Types
+    @GetMapping("/types")
+    public ResponseEntity<List<String>> getRoomTypes() {
+        try {
+            List<String> roomTypes = roomService.getDistinctRoomTypes();
+            return ResponseEntity.ok(roomTypes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

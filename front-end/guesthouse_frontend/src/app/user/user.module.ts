@@ -20,6 +20,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 import { MatTableModule } from '@angular/material/table';         // For mat-table
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // For mat-spinner
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; /
 
         MatTableModule, 
         MatProgressSpinnerModule,
+        MatCheckboxModule,
          
   
   ]

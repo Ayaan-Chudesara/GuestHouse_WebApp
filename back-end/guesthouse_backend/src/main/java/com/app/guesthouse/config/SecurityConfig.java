@@ -43,14 +43,18 @@ public class SecurityConfig {
                 // Disable CSRF for stateless REST APIs (since you're using JWTs)
                 .csrf(csrf -> csrf.disable())
                 // Configure authorization for HTTP requests
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         // Allow /api/auth/** endpoints (like /login, /register) for everyone
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Allow user verification endpoint - using ant pattern
+                        .requestMatchers(HttpMethod.GET, "/api/users/*/verify").permitAll()
                         // Admin endpoints require ADMIN role
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // User endpoints require authentication
                         .requestMatchers("/api/bookings/**").authenticated()
                         .requestMatchers("/api/rooms/**").authenticated()
+                        .requestMatchers("/api/documents/**").permitAll()
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
@@ -95,17 +99,17 @@ public class SecurityConfig {
         );
     }
 
-    // If you plan to use CORS, uncomment and configure this bean properly.
-    // It's often better to configure CORS using WebMvcConfigurer if only specific paths need it.
-//     @Bean
-//     public CorsConfigurationSource corsConfigurationSource() {
-//         CorsConfiguration configuration = new CorsConfiguration();
-//         configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Your frontend URL
-//         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Add PATCH if used
-//         configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-//         configuration.setAllowCredentials(true); // Allow sending cookies/auth headers
-//         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//         source.registerCorsConfiguration("/**", configuration); // Apply to all paths
-//         return source;
-//     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization"));
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

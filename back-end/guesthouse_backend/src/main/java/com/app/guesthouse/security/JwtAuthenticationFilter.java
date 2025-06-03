@@ -31,13 +31,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        // Add debug logging
+        System.out.println("Request URL: " + request.getRequestURL());
+        System.out.println("Request Method: " + request.getMethod());
+
         String header = request.getHeader("Authorization");
         String token = null;
         String email = null;
 
+        // Add debug logging
+        System.out.println("Authorization header: " + header);
+
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
             email = jwtUtil.extractUsername(token);
+            // Add debug logging
+            System.out.println("Token found: " + token.substring(0, Math.min(token.length(), 10)) + "...");
+            System.out.println("Extracted email: " + email);
+        } else {
+            System.out.println("No Bearer token found in request");
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -54,15 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                System.out.println("Authentication set in SecurityContext");
             }
         }
 
         chain.doFilter(request, response);
-
-        System.out.println("Header: " + header);
-        System.out.println("Token: " + token);
-        System.out.println("Extracted email: " + email);
-
     }
 
 

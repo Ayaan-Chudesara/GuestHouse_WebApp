@@ -5,6 +5,7 @@ import com.app.guesthouse.Entity.GuestHouse;
 import com.app.guesthouse.Entity.Room;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,4 +26,12 @@ public interface RoomService {
     public void deleteRoom(Long id) ;
 
     List<String> getDistinctRoomTypes();
+
+    // 🔍 Search Available Rooms
+    List<RoomDTO> searchAvailableRooms(
+        LocalDate checkInDate,
+        LocalDate checkOutDate,
+        Long guestHouseId,
+        String roomType,
+        Integer numberOfGuests);
 }

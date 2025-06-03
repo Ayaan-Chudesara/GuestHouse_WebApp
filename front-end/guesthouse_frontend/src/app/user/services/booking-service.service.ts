@@ -17,10 +17,7 @@ export class BookingServiceService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
   /**
@@ -30,7 +27,16 @@ export class BookingServiceService {
    */
   createBooking(bookingRequest: BookingRequest): Observable<Booking> {
     const headers = this.getAuthHeaders();
-    return this.http.post<Booking>(`${this.apiUrl}/create`, bookingRequest, { headers });
+    return this.http.post<Booking>(this.apiUrl, bookingRequest, { headers });
+  }
+
+  /**
+   * Fetches all available room types.
+   * @returns An Observable of an array of room type strings.
+   */
+  getRoomTypes(): Observable<string[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<string[]>(`${this.roomApiUrl}/types`, { headers });
   }
 
   /**
@@ -42,6 +48,7 @@ export class BookingServiceService {
    */
   getAllRooms(): Observable<Room[]> {
     const headers = this.getAuthHeaders();
+    console.log('Fetching rooms with headers:', headers);
     return this.http.get<Room[]>(this.roomApiUrl, { headers });
   }
 
@@ -93,10 +100,25 @@ export class BookingServiceService {
    */
   verifyUser(userId: number): Observable<boolean> {
     const headers = this.getAuthHeaders();
-    return this.http.get<boolean>(`${this.userApiUrl}/verify/${userId}`, { headers });
+    return this.http.get<boolean>(`${this.userApiUrl}/${userId}/verify`, { headers });
+  }
+
+  /**
+   * Searches for available rooms based on the given criteria.
+   * @param params Search parameters including dates, guest house, room type, and number of guests
+   * @returns An Observable of an array of available Room objects
+   */
+  searchAvailableRooms(params: {
+    checkInDate: string,
+    checkOutDate: string,
+    guestHouseId?: number,
+    roomType?: string,
+    numberOfGuests: number
+  }): Observable<Room[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Room[]>(`${this.roomApiUrl}/available`, { headers, params });
   }
 
   // You might need more methods depending on your backend API, e.g.:
-  // searchAvailableRooms(criteria: any): Observable<Room[]>;
   // getBookingDetails(id: number): Observable<Booking>;
 }

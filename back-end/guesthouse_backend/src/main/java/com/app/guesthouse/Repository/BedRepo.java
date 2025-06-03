@@ -15,21 +15,6 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
 
     long countByStatus(Bed.Status status);
 
-
-    @Query("SELECT b FROM Bed b " +
-            "JOIN b.room r " +
-            "JOIN r.guestHouse gh " +
-            "WHERE gh.id = :guestHouseId " +
-            "AND r.roomType = :roomType " +
-            "AND b.status = 'AVAILABLE'")
-    List<Bed> findAvailableBeds(
-            @Param("guestHouseId") Long guestHouseId,
-            @Param("roomType") String roomType,
-            @Param("checkInDate") LocalDate checkIn,
-            @Param("checkOutDate") LocalDate checkOut,
-            @Param("numberOfBeds") int numberOfBeds
-    );
-
     @Query(value = "SELECT b.* FROM beds b " +
             "JOIN rooms r ON r.id = b.room_id " +
             "JOIN guest_houses gh ON gh.id = r.guest_house_id " +
@@ -53,7 +38,6 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate);
 
-
     @Query(value = "SELECT b.* FROM beds b " +
             "WHERE b.room_id = :roomId " +
             "AND b.status = 'AVAILABLE' " +
@@ -71,5 +55,4 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate
     );
-
 }

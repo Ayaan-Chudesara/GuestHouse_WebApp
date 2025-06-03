@@ -22,6 +22,8 @@ export class UserBookingComponent implements OnInit {
   searchAttempted: boolean = false;
   currentUserId: number | null = null;
   loading: boolean = false;
+  termsAccepted: boolean = false;
+  pdfUrl: string = 'http://localhost:8080/api/documents/terms-and-conditions';
 
   guestHouses: GuestHouse[] = [];
   roomTypes: string[] = [];
@@ -107,7 +109,8 @@ export class UserBookingComponent implements OnInit {
       numberOfGuests: [1, [Validators.required, Validators.min(1)]],
       guestHouseId: [null, Validators.required],
       roomTypeId: [null, Validators.required],
-      purpose: ['']
+      purpose: [''],
+      termsAccepted: [false]
     });
   }
 
@@ -124,11 +127,9 @@ export class UserBookingComponent implements OnInit {
   }
 
   fetchRoomTypes(): void {
-    // First get all rooms to extract unique room types
-    this.bookingService.getAllRooms().subscribe({
-      next: (rooms: Room[]) => {
-        // Extract unique room types
-        this.roomTypes = [...new Set(rooms.map(room => room.roomType))];
+    this.bookingService.getRoomTypes().subscribe({
+      next: (roomTypes) => {
+        this.roomTypes = roomTypes;
       },
       error: (error) => {
         console.error('Error fetching room types:', error);
@@ -158,34 +159,32 @@ export class UserBookingComponent implements OnInit {
     const roomType = this.bookingForm.get('roomTypeId')?.value;
 
     if (!checkIn || !checkOut || checkIn >= checkOut) {
-        this.message = 'Please select valid check-in and check-out dates.';
-        this.loading = false;
-        return;
+      this.message = 'Please select valid check-in and check-out dates.';
+      this.loading = false;
+      return;
     }
 
     this.message = 'Searching for rooms...';
 
-    this.bookingService.getAllRooms().subscribe({
-      next: (rooms: Room[]) => {
-        console.log('All rooms:', rooms);
-        console.log('Filter criteria:', { numberOfGuests, guestHouseId, roomType });
-        
-        this.availableRooms = rooms.filter(room => {
-          const matchesGuests = room.numberOfBeds >= numberOfGuests;
-          const matchesGuestHouse = !guestHouseId || room.guestHouseId === Number(guestHouseId);
-          const matchesRoomType = !roomType || room.roomType === roomType;
-          
-          console.log(`Room ${room.roomNo}:`, {
-            matchesGuests,
-            matchesGuestHouse,
-            matchesRoomType,
-            roomType: room.roomType,
-            selectedType: roomType
-          });
-          
-          return matchesGuests && matchesGuestHouse && matchesRoomType;
-        });
+    // Format dates to YYYY-MM-DD
+    const formatDate = (date: Date): string => {
+      return date.toISOString().split('T')[0];
+    };
 
+    const searchParams = {
+      checkInDate: formatDate(checkIn),
+      checkOutDate: formatDate(checkOut),
+      numberOfGuests: numberOfGuests,
+      guestHouseId: guestHouseId,
+      roomType: roomType
+    };
+
+    console.log('Searching for rooms with params:', searchParams);
+
+    this.bookingService.searchAvailableRooms(searchParams).subscribe({
+      next: (rooms: Room[]) => {
+        console.log('Available rooms:', rooms);
+        this.availableRooms = rooms;
         this.loading = false;
         this.message = '';
         
@@ -223,6 +222,11 @@ export class UserBookingComponent implements OnInit {
   }
 
   confirmBooking(): void {
+    if (!this.bookingForm.get('termsAccepted')?.value) {
+      this.message = 'Please accept the terms and conditions to proceed with booking.';
+      return;
+    }
+
     if (!this.selectedRoom) {
       this.message = 'Please select a room to book.';
       return;
@@ -296,7 +300,8 @@ export class UserBookingComponent implements OnInit {
       numberOfGuests: 1,
       guestHouseId: null,
       roomTypeId: null,
-      purpose: ''
+      purpose: '',
+      termsAccepted: false
     });
     this.availableRooms = [];
     this.selectedRoom = null;
@@ -311,8 +316,12 @@ export class UserBookingComponent implements OnInit {
   }
 
   getTomorrowDate(): string {
-    const today = new Date();
-    today.setDate(today.getDate() + 1);
-    return today.toISOString().split('T')[0];
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  }
+
+  openTermsAndConditions(): void {
+    window.open(this.pdfUrl, '_blank');
   }
 }

@@ -44,27 +44,20 @@ public class BookingController {
     }
 
     // Endpoint for regular user-initiated booking (status defaults to PENDING in service)
-    @PostMapping("/create") // Added "/create" to distinguish from admin create
+    @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
-            System.out.println("Received booking request: " + bookingDTO); // Log the full DTO
-            BookingDTO created = bookingService.createBooking(bookingDTO);
-            return new ResponseEntity<>(created, HttpStatus.CREATED); // 201 Created
-        } catch (NoSuchElementException e) { // User or Bed not found
-            System.err.println("Resource not found error: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(e.getMessage()));
-        } catch (IllegalArgumentException | IllegalStateException e) { // Invalid dates, bed unavailable, etc.
-            System.err.println("Validation error: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(e.getMessage()));
+            BookingDTO createdBooking = bookingService.createBooking(bookingDTO);
+            return ResponseEntity.ok(createdBooking);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error creating booking: " + e.getMessage());
-            e.printStackTrace(); // Add stack trace for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("An unexpected error occurred while creating the booking: " + e.getMessage()));
+                    .body("An error occurred while creating the booking: " + e.getMessage());
         }
     }
 

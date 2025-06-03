@@ -364,3 +364,79 @@ h3 {
     grid-template-columns: 1fr; /* Single column on small screens */
   }
 }
+
+/* Terms and Conditions Section */
+.terms-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.terms-section h4 {
+  color: #FFFFFF;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.terms-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.terms-content button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: rgba(107, 148, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.terms-content button:hover {
+  background-color: rgba(107, 148, 255, 0.2);
+}
+
+.terms-content .mat-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: text-bottom;
+}
+
+.checkbox-container {
+  margin-top: 5px;
+}
+
+.terms-checkbox {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+/* Override Material checkbox styles for dark theme */
+::ng-deep .terms-checkbox .mat-checkbox-frame {
+  border-color: rgba(255, 255, 255, 0.7);
+  border-width: 1px;
+}
+
+::ng-deep .terms-checkbox .mat-checkbox-background {
+  background-color: #6B94FF !important;
+}
+
+::ng-deep .terms-checkbox .mat-checkbox-label {
+  color: #FFFFFF !important;
+}
+
+::ng-deep .terms-checkbox.mat-checkbox-checked .mat-checkbox-background {
+  background-color: #6B94FF !important;
+}
+
+::ng-deep .terms-checkbox .mat-checkbox-inner-container {
+  margin-right: 12px;
+}
+
+.terms-section mat-error {
+  font-size: 0.85em;
+  margin-top: 4px;
+  color: #FF6B6B;
+  display: block;
+}

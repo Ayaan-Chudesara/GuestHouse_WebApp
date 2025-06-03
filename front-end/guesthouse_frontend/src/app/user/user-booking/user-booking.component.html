@@ -72,7 +72,7 @@
         </mat-form-field>
 
         <mat-card-actions class="booking-actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="bookingForm.invalid">Search Available Rooms</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="bookingForm.get('checkInDate')?.invalid || bookingForm.get('checkOutDate')?.invalid || bookingForm.get('numberOfGuests')?.invalid || bookingForm.get('guestHouseId')?.invalid || bookingForm.get('roomTypeId')?.invalid">Search Available Rooms</button>
           <button mat-button type="button" (click)="resetForm()">Clear Form</button>
         </mat-card-actions>
       </form>
@@ -105,17 +105,39 @@
       <div class="selected-room-section" *ngIf="selectedRoom">
         <h3>Confirm Your Booking</h3>
         <mat-card class="selected-room-details">
-          <mat-card-content>
+          <mat-card-content [formGroup]="bookingForm">
             <p>You have selected: <strong>Room No: {{ selectedRoom.roomNo }}</strong> ({{ selectedRoom.roomType }})</p>
             <p>Guest House: {{ selectedRoom.guestHouseName }}</p>
             <p>Check-in: {{ bookingForm.get('checkInDate')?.value | date:'fullDate' }}</p>
             <p>Check-out: {{ bookingForm.get('checkOutDate')?.value | date:'fullDate' }}</p>
             <p>Number of Guests: {{ bookingForm.get('numberOfGuests')?.value }}</p>
             <p>Total estimated price: <strong>${{ calculateTotalPrice() | number:'1.2-2' }}</strong></p>
+
+            <div class="terms-section">
+              <h4>Terms and Conditions</h4>
+              <div class="terms-content">
+                <button mat-button color="primary" type="button" (click)="openTermsAndConditions()">
+                  <mat-icon>description</mat-icon>
+                  Read Terms & Conditions
+                </button>
+                <div class="checkbox-container">
+                  <mat-checkbox formControlName="termsAccepted" color="primary" class="terms-checkbox">
+                    I have agreed to the terms and conditions
+                  </mat-checkbox>
+                  <mat-error *ngIf="bookingForm.get('termsAccepted')?.hasError('required') && bookingForm.get('termsAccepted')?.touched">
+                    You must agree to the terms and conditions to proceed
+                  </mat-error>
+                </div>
+              </div>
+            </div>
           </mat-card-content>
           <mat-card-actions class="card-actions">
-            <button mat-raised-button color="primary" (click)="confirmBooking()">Confirm Booking</button>
-            <button mat-button (click)="clearSelection()">Change Selection</button>
+            <button mat-raised-button color="primary" 
+                    (click)="confirmBooking()" 
+                    [disabled]="!bookingForm.get('termsAccepted')?.value">
+              Confirm Booking
+            </button>
+            <button mat-button type="button" (click)="clearSelection()">Change Selection</button>
           </mat-card-actions>
         </mat-card>
       </div>

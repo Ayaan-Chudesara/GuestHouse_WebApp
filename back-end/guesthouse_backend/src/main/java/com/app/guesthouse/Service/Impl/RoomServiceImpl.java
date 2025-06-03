@@ -1,8 +1,10 @@
 package com.app.guesthouse.Service.Impl;
 
 import com.app.guesthouse.DTO.RoomDTO;
+import com.app.guesthouse.Entity.Bed;
 import com.app.guesthouse.Entity.GuestHouse;
 import com.app.guesthouse.Entity.Room;
+import com.app.guesthouse.Repository.BedRepo;
 import com.app.guesthouse.Repository.GuestHouseRepo;
 import com.app.guesthouse.Repository.RoomRepo;
 import com.app.guesthouse.Service.RoomService;
@@ -10,6 +12,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     private GuestHouseRepo guestHouseRepository;
+
+    @Autowired
+    private BedRepo bedRepo;
 
     // ➕ Create Room
     public RoomDTO createRoom(RoomDTO roomDTO) {
@@ -96,5 +103,34 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<String> getDistinctRoomTypes() {
         return roomRepository.findDistinctRoomTypes();
+    }
+
+    @Override
+    public List<RoomDTO> searchAvailableRooms(
+            LocalDate checkInDate,
+            LocalDate checkOutDate,
+            Long guestHouseId,
+            String roomType,
+            Integer numberOfGuests) {
+
+        // Find available beds based on the criteria
+        List<Bed> availableBeds = bedRepo.findAvailableBedsByCriteria(
+            guestHouseId,
+            roomType,
+            numberOfGuests != null ? numberOfGuests : 1,
+            checkInDate,
+            checkOutDate
+        );
+
+        // Get unique rooms from available beds
+        List<Room> availableRooms = availableBeds.stream()
+            .map(Bed::getRoom)
+            .distinct()
+            .collect(Collectors.toList());
+
+        // Convert rooms to DTOs
+        return availableRooms.stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
     }
 }

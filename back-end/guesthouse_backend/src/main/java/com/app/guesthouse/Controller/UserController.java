@@ -16,13 +16,22 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/verify/{userId}")
+    @GetMapping("/{userId}/verify")
     public ResponseEntity<Boolean> verifyUser(@PathVariable Long userId) {
         try {
+            if (userId == null || userId <= 0) {
+                return ResponseEntity.badRequest().body(false);
+            }
+            System.out.println("Verifying user with ID: " + userId);
             boolean exists = userService.verifyUserExists(userId);
+            System.out.println("User exists: " + exists);
             return ResponseEntity.ok(exists);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid user ID format: " + e.getMessage());
+            return ResponseEntity.badRequest().body(false);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error verifying user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
