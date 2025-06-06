@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data // Includes @Getter and @Setter, so removed explicit ones
+@Data
 @Table(name = "bookings")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,26 +20,26 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // A booking is made by one user
-    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_booking_user")) // foreign key column and not null
-    private User user;  //references user entity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_booking_user"))
+    private User user;
 
-    @OneToOne(fetch = FetchType.LAZY) // <--- CONFIRMED: One booking is for one specific bed
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bed_id", nullable = false)
-    private Bed bed;  //references bed entity
+    private Bed bed;
 
     @Column(nullable = false)
-    private LocalDate bookingDate;  //date of booking (check-in date)
+    private LocalDate bookingDate;
 
     @Column(nullable = false)
-    private Integer durationDays; // duration of stay in days
+    private Integer durationDays;
 
     @Column(nullable = false)
-    private Integer numberOfGuests; // number of guests for this booking
+    private Integer numberOfGuests;
 
     private String purpose;
 
-    @Enumerated(EnumType.STRING)  // to store enum as string
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
 

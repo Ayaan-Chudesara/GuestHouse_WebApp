@@ -4,7 +4,7 @@ import com.app.guesthouse.DTO.AdminBookingRequestDTO;
 import com.app.guesthouse.DTO.BookingDTO;
 import com.app.guesthouse.Entity.Bed;
 import com.app.guesthouse.Entity.Booking;
-import com.app.guesthouse.Entity.Room; // Import Room entity
+import com.app.guesthouse.Entity.Room;
 import com.app.guesthouse.Entity.User;
 import com.app.guesthouse.Repository.BedRepo;
 import com.app.guesthouse.Repository.BookingRepo;
@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
                 dto.setRoomId(booking.getBed().getRoom().getId());
                 dto.setRoomNo(booking.getBed().getRoom().getRoomNo());
                 dto.setRoomType(booking.getBed().getRoom().getRoomType());
-                dto.setNumberOfBeds(booking.getBed().getRoom().getNumberOfBeds()); // Correctly reflects room capacity
+                dto.setNumberOfBeds(booking.getBed().getRoom().getNumberOfBeds());
 
                 if (booking.getBed().getRoom().getGuestHouse() != null) {
                     dto.setGuestHouseId(booking.getBed().getRoom().getGuestHouse().getId());
@@ -69,22 +69,22 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-        dto.setBookingDate(booking.getBookingDate()); // This is the checkInDate from entity
+        dto.setBookingDate(booking.getBookingDate());
         dto.setDurationDays(booking.getDurationDays());
         dto.setPurpose(booking.getPurpose());
         dto.setStatus(booking.getStatus());
         dto.setCreatedAt(booking.getCreatedAt());
         dto.setNumberOfGuests(booking.getNumberOfGuests());
 
-        dto.setCheckInDate(booking.getBookingDate()); // Set DTO checkInDate from entity's bookingDate
-        dto.setCheckOutDate(booking.getBookingDate().plusDays(booking.getDurationDays())); // Calculate checkOutDate for DTO
+        dto.setCheckInDate(booking.getBookingDate());
+        dto.setCheckOutDate(booking.getBookingDate().plusDays(booking.getDurationDays()));
 
         return dto;
     }
 
     @Transactional
     public BookingDTO createBooking(BookingDTO bookingDTO) {
-        // 1. Validate input and log request details
+
         System.out.println("Creating booking with details: " + 
             "userId=" + bookingDTO.getUserId() + ", " +
             "roomId=" + bookingDTO.getRoomId() + ", " +
@@ -102,19 +102,16 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalArgumentException("Number of guests must be at least 1.");
         }
 
-        // 2. Verify user exists and fetch user details
         System.out.println("Checking if user exists with ID: " + bookingDTO.getUserId());
         boolean userExists = userRepo.existsById(bookingDTO.getUserId());
         if (!userExists) {
             throw new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId() + ". Please ensure you are logged in correctly.");
         }
 
-        // 3. Fetch User
         User user = userRepo.findById(bookingDTO.getUserId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId()));
         System.out.println("Found user: " + user.getName() + " (ID: " + user.getId() + ")");
 
-        // 4. Validate Dates and Calculate Duration
         if (bookingDTO.getCheckInDate() == null || bookingDTO.getCheckOutDate() == null) {
             throw new IllegalArgumentException("Check-in and Check-out dates are required for booking creation.");
         }
@@ -123,23 +120,19 @@ public class BookingServiceImpl implements BookingService {
         LocalDate checkInDate = bookingDTO.getCheckInDate();
         LocalDate checkOutDate = bookingDTO.getCheckOutDate();
 
-        // Validate check-in date
         if (checkInDate.isBefore(today)) {
             throw new IllegalArgumentException("Check-in date cannot be in the past. Selected: " + checkInDate + ", Today: " + today);
         }
 
-        // Validate check-out date
         if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
             throw new IllegalArgumentException("Check-out date must be after check-in date. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
         }
 
-        // Calculate duration
         long durationDays = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
         if (durationDays == 0) {
             throw new IllegalArgumentException("Booking duration must be at least one day. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
         }
 
-        // 5. Ensure the Room exists and validate capacity
         Room room = roomRepo.findById(bookingDTO.getRoomId())
                 .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + bookingDTO.getRoomId()));
         System.out.println("Found room: " + room.getRoomNo() + " (ID: " + room.getId() + ")");
@@ -149,7 +142,6 @@ public class BookingServiceImpl implements BookingService {
                 ") exceeds room capacity (" + room.getNumberOfBeds() + ").");
         }
 
-        // 6. Search for an AVAILABLE Bed within this specific Room for the given dates
         List<Bed> availableBedsInRoom = bedRepo.findFirstAvailableBedInRoomForDates(
                 room.getId(),
                 checkInDate,
@@ -165,11 +157,9 @@ public class BookingServiceImpl implements BookingService {
             );
         }
 
-        // Select the first available bed found
         Bed selectedBed = availableBedsInRoom.get(0);
         System.out.println("Selected bed: " + selectedBed.getBedNo() + " (ID: " + selectedBed.getId() + ")");
 
-        // 7. Create Booking entity
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setBed(selectedBed);
@@ -180,17 +170,14 @@ public class BookingServiceImpl implements BookingService {
         booking.setCreatedAt(LocalDateTime.now());
         booking.setNumberOfGuests(bookingDTO.getNumberOfGuests());
 
-        // 8. Update Bed Status
         selectedBed.setStatus(Bed.Status.BOOKED);
         bedRepo.save(selectedBed);
         System.out.println("Updated bed status to BOOKED");
 
-        // 9. Save Booking
         try {
             Booking saved = bookingRepo.save(booking);
             System.out.println("Successfully created booking with ID: " + saved.getId());
             
-            // 10. Send Notification
             try {
                 mailService.sendBookingNotification(saved.getUser().getEmail(), saved);
             } catch (Exception e) {
@@ -217,14 +204,11 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void deleteBooking(Long id) {
         Booking booking = bookingRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Booking not found with ID: " + id));
-        // Logic for setting bed back to AVAILABLE should correctly handle status transitions
         if (booking.getBed() != null &&
                 (booking.getStatus() == Booking.Status.APPROVED ||
                         booking.getStatus() == Booking.Status.CHECKED_IN ||
-                        booking.getStatus() == Booking.Status.PENDING) // Also consider PENDING bookings that are deleted
+                        booking.getStatus() == Booking.Status.PENDING)
         ) {
-            // Only set to AVAILABLE if no other active bookings exist for this bed.
-            // This is a more robust check:
             boolean otherActiveBookings = bookingRepo.findOverlappingBookingsForBedExcludingCurrent(
                     booking.getBed().getId(),
                     booking.getBookingDate(),
@@ -241,7 +225,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<BookingDTO> getBookingsByUser(Long userId) {
-        List<Booking> bookings = bookingRepo.findByUserId(userId); // Assuming findByUserId exists in BookingRepo
+        List<Booking> bookings = bookingRepo.findByUserId(userId);
         return bookings.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
@@ -253,7 +237,6 @@ public class BookingServiceImpl implements BookingService {
 
         if (booking.getBed() != null) {
             if (status == Booking.Status.CHECKED_OUT && oldStatus == Booking.Status.CHECKED_IN) {
-                // When checking out, release the bed if no other active bookings overlap its original dates
                 boolean otherActiveBookings = bookingRepo.findOverlappingBookingsForBedExcludingCurrent(
                         booking.getBed().getId(),
                         booking.getBookingDate(),
@@ -266,12 +249,10 @@ public class BookingServiceImpl implements BookingService {
                     bedRepo.save(booking.getBed());
                 }
             } else if (status == Booking.Status.CHECKED_IN && oldStatus == Booking.Status.APPROVED) {
-                // Ensure bed is marked BOOKED if it moves to CHECKED_IN
                 booking.getBed().setStatus(Bed.Status.BOOKED);
                 bedRepo.save(booking.getBed());
             } else if ((status == Booking.Status.CANCELLED || status == Booking.Status.REJECTED) &&
                     (oldStatus == Booking.Status.PENDING || oldStatus == Booking.Status.APPROVED || oldStatus == Booking.Status.CHECKED_IN)) {
-                // If cancelled/rejected, release the bed if no other active bookings overlap its original dates
                 boolean otherActiveBookings = bookingRepo.findOverlappingBookingsForBedExcludingCurrent(
                         booking.getBed().getId(),
                         booking.getBookingDate(),
@@ -290,7 +271,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     public List<BookingDTO> getBookingsBetweenDates(LocalDate start, LocalDate end) {
-        List<Booking> bookings = bookingRepo.findByBookingDateBetween(start, end); // Assuming this method exists in BookingRepo
+        List<Booking> bookings = bookingRepo.findByBookingDateBetween(start, end);
         return bookings.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
@@ -298,7 +279,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void createBookingAsAdmin(AdminBookingRequestDTO request) {
         try {
-            // 1. Validate request
+
             if (request.getGuestName() == null || request.getGuestName().trim().isEmpty()) {
                 throw new IllegalArgumentException("Guest name is required");
             }
@@ -315,19 +296,18 @@ public class BookingServiceImpl implements BookingService {
                 throw new IllegalArgumentException("Number of beds must be greater than 0");
             }
 
-            // 2. Find or create User
             User user = userRepo.findByEmail(request.getGuestEmail())
                     .orElseGet(() -> {
                         User newUser = new User();
                         newUser.setName(request.getGuestName());
                         newUser.setEmail(request.getGuestEmail());
                         newUser.setPhone("N/A");
-                        newUser.setPassword("default_hashed_password"); // Ensure secure hashing here
+                        newUser.setPassword("default_hashed_password");
                         newUser.setRole(User.Role.USER);
                         return userRepo.save(newUser);
                     });
 
-            // 3. Calculate duration and validate dates
+
             if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
                 throw new IllegalArgumentException("Check-in and Check-out dates are required.");
             }
@@ -342,7 +322,6 @@ public class BookingServiceImpl implements BookingService {
                 throw new IllegalArgumentException("Booking duration must be at least one day.");
             }
 
-            // 4. Find a suitable and AVAILABLE Bed
             List<Bed> candidateBeds = bedRepo.findAvailableBedsByCriteria(
                     request.getGuestHouseId(),
                     request.getRoomType(),
@@ -364,7 +343,6 @@ public class BookingServiceImpl implements BookingService {
 
             Bed selectedBed = candidateBeds.get(0);
 
-            // 5. Create Booking
             Booking booking = new Booking();
             booking.setUser(user);
             booking.setBed(selectedBed);
@@ -372,34 +350,29 @@ public class BookingServiceImpl implements BookingService {
             booking.setDurationDays((int) durationDays);
             booking.setPurpose(request.getPurpose());
             booking.setCreatedAt(LocalDateTime.now());
-            booking.setStatus(Booking.Status.APPROVED); // Default to APPROVED for admin bookings
+            booking.setStatus(Booking.Status.APPROVED);
             
-            // Set numberOfGuests to numberOfBeds if not provided
+
             int numberOfGuests = request.getNumberOfGuests();
             if (numberOfGuests <= 0) {
                 numberOfGuests = request.getNumberOfBeds();
             }
             booking.setNumberOfGuests(numberOfGuests);
 
-            // 6. Update Bed Status to BOOKED
             selectedBed.setStatus(Bed.Status.BOOKED);
             bedRepo.save(selectedBed);
 
-            // 7. Save Booking
             Booking savedBooking = bookingRepo.save(booking);
 
-            // 8. Send email notification
             try {
                 mailService.sendBookingNotification(user.getEmail(), savedBooking);
             } catch (Exception e) {
                 System.err.println("Email sending failed for admin-created booking: " + e.getMessage());
-                // Don't throw here, as the booking was successful
             }
         } catch (Exception e) {
-            // Log the full error for debugging
             System.err.println("Error in createBookingAsAdmin: " + e.getMessage());
             e.printStackTrace();
-            throw e; // Re-throw to maintain the transaction
+            throw e;
         }
     }
 }

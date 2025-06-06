@@ -23,7 +23,7 @@ public class DocumentController {
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=terms-and-conditions.pdf");
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
-            headers.add(HttpHeaders.CACHE_CONTROL, "public, max-age=86400"); // Cache for 24 hours
+            headers.add(HttpHeaders.CACHE_CONTROL, "public, max-age=86400");
             
             return ResponseEntity.ok()
                     .headers(headers)

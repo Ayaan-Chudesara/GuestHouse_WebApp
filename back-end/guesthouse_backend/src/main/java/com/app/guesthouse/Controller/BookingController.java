@@ -1,7 +1,7 @@
 package com.app.guesthouse.Controller;
 
 import com.app.guesthouse.DTO.BookingDTO;
-import com.app.guesthouse.Entity.Booking; // For Booking.Status enum
+import com.app.guesthouse.Entity.Booking;
 import com.app.guesthouse.Service.BookingService;
 import com.app.guesthouse.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,12 @@ import java.lang.IllegalStateException;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException; // Import for specific error handling
+import java.util.NoSuchElementException;
 
-import java.lang.IllegalArgumentException; // For invalid input
+import java.lang.IllegalArgumentException;
 
 @RestController
 @RequestMapping("/api/bookings")
-//@CrossOrigin(origins = "*") // Consider restricting origins in production
 public class BookingController {
     private final BookingService bookingService;
     private final UserService userService;
@@ -30,7 +29,6 @@ public class BookingController {
         this.userService = userService;
     }
 
-    // Helper class for error responses
     private static class ErrorResponse {
         private final String message;
 
@@ -43,7 +41,6 @@ public class BookingController {
         }
     }
 
-    // Endpoint for regular user-initiated booking (status defaults to PENDING in service)
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
@@ -61,19 +58,17 @@ public class BookingController {
         }
     }
 
-    // Get all bookings
     @GetMapping
     public ResponseEntity<List<BookingDTO>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    // Get booking by ID
     @GetMapping("/{id}")
     public ResponseEntity<BookingDTO> getBookingById(@PathVariable Long id) {
         try {
             BookingDTO dto = bookingService.getBookingById(id);
             return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
-        } catch (NoSuchElementException e) { // Service throws if not found
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             System.err.println("Error fetching booking by ID " + id + ": " + e.getMessage());
@@ -81,15 +76,14 @@ public class BookingController {
         }
     }
 
-    // Delete a booking
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
         try {
             bookingService.deleteBooking(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (IllegalStateException e) { // e.g., cannot delete active booking
+        } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception e) {
             System.err.println("Error deleting booking " + id + ": " + e.getMessage());
@@ -99,21 +93,17 @@ public class BookingController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingDTO>> getBookingsByUser(@PathVariable Long userId) {
-        // Assuming service handles user existence check if needed
         return ResponseEntity.ok(bookingService.getBookingsByUser(userId));
     }
 
-    // Admin: Approve a booking (If this is only for admin, consider moving to AdminController)
-    // If it's a general endpoint that anyone with permission can call, keep it.
     @PutMapping("/{id}/approve")
     public ResponseEntity<BookingDTO> approveBooking(@PathVariable Long id) {
         try {
-            // Using the BookingService method that updates status with enum
             BookingDTO dto = bookingService.updateBookingStatus(id, Booking.Status.APPROVED);
             return ResponseEntity.ok(dto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException | IllegalStateException e) { // Invalid state for approval
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
             System.err.println("Error approving booking " + id + ": " + e.getMessage());
@@ -121,17 +111,14 @@ public class BookingController {
         }
     }
 
-    // Admin/User: Cancel a booking (mark as CANCELLED, not REJECTED for user initiated cancel)
-    // If a user cancels, it's CANCELLED. If admin rejects, it's REJECTED.
     @PutMapping("/{id}/cancel")
     public ResponseEntity<BookingDTO> cancelBooking(@PathVariable Long id) {
         try {
-            // Using the BookingService method that updates status with enum
-            BookingDTO dto = bookingService.updateBookingStatus(id, Booking.Status.CANCELLED); // Changed to CANCELLED
+            BookingDTO dto = bookingService.updateBookingStatus(id, Booking.Status.CANCELLED);
             return ResponseEntity.ok(dto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException | IllegalStateException e) { // Invalid state for cancellation
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
             System.err.println("Error canceling booking " + id + ": " + e.getMessage());
@@ -139,11 +126,9 @@ public class BookingController {
         }
     }
 
-    // CHECK-IN endpoint
     @PutMapping("/{bookingId}/check-in")
     public ResponseEntity<String> checkIn(@PathVariable Long bookingId) {
         try {
-            // Call the correct method from BookingService
             bookingService.updateBookingStatus(bookingId, Booking.Status.CHECKED_IN);
             return ResponseEntity.ok("Guest checked in successfully.");
         } catch (NoSuchElementException e) {
@@ -156,11 +141,9 @@ public class BookingController {
         }
     }
 
-    // CHECK-OUT endpoint
     @PutMapping("/{bookingId}/check-out")
     public ResponseEntity<String> checkOut(@PathVariable Long bookingId) {
         try {
-            // Call the correct method from BookingService
             bookingService.updateBookingStatus(bookingId, Booking.Status.CHECKED_OUT);
             return ResponseEntity.ok("Guest checked out successfully.");
         } catch (NoSuchElementException e) {

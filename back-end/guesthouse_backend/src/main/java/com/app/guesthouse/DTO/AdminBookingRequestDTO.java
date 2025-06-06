@@ -17,7 +17,7 @@ public class AdminBookingRequestDTO {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private Long guestHouseId;
-    private String roomType;   // e.g.,single , double
+    private String roomType;
     private int numberOfBeds;
     private int numberOfGuests;
     private String purpose;

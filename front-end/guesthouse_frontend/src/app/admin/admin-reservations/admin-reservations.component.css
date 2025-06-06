@@ -311,40 +311,7 @@ tr:hover {
     margin: 2px;
   }
 
-  /* Table specific adjustments for small screens - "Card" view or column hiding */
-  /* This is a more advanced technique than just overflow-x.
-     For this example, we'll keep overflow-x, but here's how you'd start a "card" view:
-  */
-  /*
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-  tr { border: 1px solid var(--color-deep-blue); margin-bottom: 15px; border-radius: 8px; }
-  td {
-    border: none;
-    border-bottom: 1px solid rgba(30, 58, 138, 0.1);
-    position: relative;
-    padding-left: 50%;
-    text-align: right;
-  }
-  td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 6px;
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-align: left;
-    font-weight: bold;
-    color: var(--color-accent-blue-2);
-  }
-  td:last-child { border-bottom: none; }
-  */
+  
 }
 
 /* For very small screens (e.g., typical mobile portrait) */

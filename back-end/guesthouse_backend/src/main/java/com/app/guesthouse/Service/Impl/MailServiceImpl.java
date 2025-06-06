@@ -31,4 +31,19 @@ public class MailServiceImpl {
 
         mailSender.send(message);
     }
+
+    public void sendPasswordResetEmail(String to, String name, String resetToken) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Password Reset Request - Guest House");
+        message.setText(
+                "Dear " + name + ",\n\n" +
+                "You have requested to reset your password. Please click on the link below to reset your password:\n\n" +
+                "http://localhost:4200/auth/reset-password?token=" + resetToken + "\n\n" +
+                "This link will expire in 24 hours.\n\n" +
+                "If you did not request a password reset, please ignore this email.\n\n" +
+                "Best regards,\nGuest House Team");
+
+        mailSender.send(message);
+    }
 }

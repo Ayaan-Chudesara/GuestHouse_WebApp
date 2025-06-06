@@ -1,0 +1,172 @@
+# GuestHouse Management System - Complete Documentation
+
+## Project Overview and Architecture
+The GuestHouse Management System is a full-stack web application built using Spring Boot 3.4.5 (backend) and Angular (frontend). The system uses MySQL 8 for data persistence, JWT for authentication, and follows a layered architecture pattern. The backend is structured into multiple layers: Entity, Repository, Service, and Controller, while the frontend follows Angular's component-based architecture.
+
+## Technology Stack and Dependencies
+Backend: Java 17, Spring Boot 3.4.5, Spring Security, Spring Data JPA, MySQL 8
+Frontend: Angular, Angular Material, RxJS
+Security: JWT (JSON Web Tokens), Spring Security
+Build Tools: Maven (backend), npm (frontend)
+Additional Libraries: Lombok (for reducing boilerplate code), Jakarta Validation API
+
+## Project Structure and Components
+
+### Backend Structure (Spring Boot)
+1. Main Application Class (GuesthouseApplication.java):
+   - Uses @SpringBootApplication annotation
+   - Entry point for the Spring Boot application
+   - Configures component scanning and auto-configuration
+
+2. Configuration Layer:
+   - SecurityConfig.java: Configures Spring Security, JWT authentication, CORS, and authorization rules
+   - WebConfig.java: Handles CORS configuration and web-related beans
+   - JwtUtil.java: Manages JWT token generation, validation, and parsing
+   - JwtAuthenticationFilter.java: Intercepts requests to validate JWT tokens
+
+3. Entity Layer:
+   - User.java: Represents user data with fields like id, name, email, password, role
+   - GuestHouse.java: Contains guest house details including name, location, rooms
+   - Room.java: Represents room information with room number, type, capacity
+   - Bed.java: Manages individual beds within rooms
+   - Booking.java: Handles booking records with check-in/out dates, status
+
+4. Repository Layer:
+   - All repositories extend JpaRepository for CRUD operations
+   - UserRepo.java: Handles user data persistence
+   - GuestHouseRepo.java: Manages guest house data
+   - RoomRepo.java: Handles room-related database operations
+   - BookingRepo.java: Manages booking records
+   - Custom queries using @Query annotation where needed
+
+5. Service Layer:
+   - Implements business logic and transaction management
+   - BookingService.java: Handles booking operations
+   - GuestHouseService.java: Manages guest house operations
+   - UserService.java: Handles user-related operations
+   - Each service has its implementation class with @Service annotation
+
+6. Controller Layer:
+   - REST endpoints for client-server communication
+   - AdminController.java: Admin-specific operations
+   - AuthController.java: Authentication endpoints
+   - BookingController.java: Booking-related endpoints
+   - GuestHouseController.java: Guest house management endpoints
+
+### Frontend Structure (Angular)
+
+1. Core Components:
+   - user-booking: Handles booking creation interface
+   - my-bookings: Displays user's booking history
+   - admin-dashboard: Admin control panel
+   - auth: Authentication components
+
+2. Services:
+   - booking.service.ts: Manages booking API calls
+   - auth.service.ts: Handles authentication
+   - guesthouse.service.ts: Guest house operations
+
+3. Models:
+   - booking.model.ts: Booking-related interfaces
+   - user.model.ts: User-related interfaces
+   - guesthouse.model.ts: Guest house data structures
+
+4. Interceptors:
+   - jwt.interceptor.ts: Adds JWT token to requests
+
+## Database Configuration
+The application uses MySQL 8 with the following configuration in application.properties:
+- spring.datasource.url=jdbc:mysql://localhost:3306/guesthouse
+- spring.datasource.username=root
+- spring.datasource.password=1234
+- spring.jpa.hibernate.ddl-auto=update
+- spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+
+## Security Implementation
+1. JWT-based authentication:
+   - Token generation upon login
+   - Token validation for protected endpoints
+   - Role-based authorization (ADMIN/USER)
+
+2. Password encryption using BCryptPasswordEncoder
+3. CORS configuration for frontend-backend communication
+4. Protected endpoints using @PreAuthorize annotations
+
+## API Endpoints
+1. Authentication:
+   - POST /api/auth/login: User login
+   - POST /api/auth/register: User registration
+
+2. Bookings:
+   - POST /api/bookings: Create booking
+   - GET /api/bookings: Get all bookings
+   - GET /api/bookings/{id}: Get specific booking
+   - PUT /api/bookings/{id}: Update booking
+   - DELETE /api/bookings/{id}: Delete booking
+
+3. Guest Houses:
+   - GET /api/guesthouses: List all guest houses
+   - POST /api/guesthouses: Create guest house
+   - PUT /api/guesthouses/{id}: Update guest house
+   - DELETE /api/guesthouses/{id}: Delete guest house
+
+## Data Flow and Business Logic
+1. Booking Process:
+   - User selects dates and room type
+   - System checks availability
+   - User confirms booking
+   - System creates booking record
+   - Admin approves/rejects booking
+   - Email notifications sent
+
+2. Entity Relationships:
+   - User -> Bookings (One-to-Many)
+   - GuestHouse -> Rooms (One-to-Many)
+   - Room -> Beds (One-to-Many)
+   - Booking -> Bed (One-to-One)
+
+## Validation and Error Handling
+1. Backend Validation:
+   - @NotBlank, @Email annotations for input validation
+   - Custom exception handling using @ControllerAdvice
+   - Transaction management with @Transactional
+
+2. Frontend Validation:
+   - Reactive forms with validators
+   - Error messages display
+   - Form state management
+
+## Development and Deployment
+1. Development:
+   - Backend runs on port 8080
+   - Frontend runs on port 4200
+   - JWT secret key and other configurations in application.properties
+
+2. Building:
+   - Backend: mvn clean install
+   - Frontend: ng build --prod
+
+3. Running:
+   - Backend: java -jar target/guesthouse-0.0.1-SNAPSHOT.jar
+   - Frontend: ng serve
+
+## Testing
+1. Backend:
+   - Unit tests using JUnit and Mockito
+   - Integration tests for repositories
+   - API tests using MockMvc
+
+2. Frontend:
+   - Component tests using Jasmine
+   - E2E tests using Protractor
+
+## Maintenance and Monitoring
+1. Logging:
+   - Using SLF4J for backend logging
+   - Console logging for frontend
+   - Error tracking and monitoring
+
+2. Performance:
+   - Database indexing
+   - Lazy loading for entity relationships
+   - Frontend optimization using Angular best practices 

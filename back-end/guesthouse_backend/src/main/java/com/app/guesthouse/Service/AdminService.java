@@ -1,9 +1,6 @@
 package com.app.guesthouse.Service;
 
 import com.app.guesthouse.DTO.BookingDTO;
-import com.app.guesthouse.Entity.Booking;
-
-import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +21,6 @@ public interface AdminService {
 
     BookingDTO updateBooking(Long id, BookingDTO bookingDTO);
 
-    // --- NEW Implementations for getFilteredBookings ---
     List<BookingDTO> getFilteredBookings(
             Long guestHouseId,
             String roomType,

@@ -9,11 +9,10 @@ import { User } from 'src/app/core/models/user.model';
   providedIn: 'root'
 })
 export class AdminReservationsService {
- // ⭐⭐ CRITICAL: Ensure this base URL matches your AdminController's @RequestMapping ⭐⭐
   // Example: @RequestMapping("/api/admin") on your AdminController
   private adminApiUrl = 'http://localhost:8080/api/admin';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { } 
 
   // --- Booking Endpoints ---
 

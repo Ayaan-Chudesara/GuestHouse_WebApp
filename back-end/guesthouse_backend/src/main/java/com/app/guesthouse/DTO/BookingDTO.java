@@ -1,6 +1,5 @@
 package com.app.guesthouse.DTO;
 
-// Correct import for Booking.Status enum
 import com.app.guesthouse.Entity.Booking;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,37 +17,31 @@ public class BookingDTO {
 
     private Long id;
 
-    // Direct fields from Booking entity
+
     private LocalDate bookingDate;
     private Integer durationDays;
     private String purpose;
-    private Booking.Status status; // Use the correct enum
+    private Booking.Status status;
     private LocalDateTime createdAt;
-    private Integer numberOfGuests; // Number of guests for this booking
+    private Integer numberOfGuests;
 
-    // Derived user details from Booking.user
-    private Long userId; // Include user ID if needed for frontend actions
+
+    private Long userId;
     private String guestName;
     private String guestEmail;
 
-    // Derived bed details from Booking.bed
     private Long bedId;
     private String bedNo;
-    // If you need bed status in the list, add:
-    // private String bedStatus; // E.g., BOOKED/AVAILABLE from Bed.status
 
-    // Derived room details from Booking.bed.room
     private Long roomId;
-    private String roomNo;       // Aligned with Room entity's roomNo
+    private String roomNo;
     private String roomType;
-    private Integer numberOfBeds; // From Room entity
+    private Integer numberOfBeds;
 
-    // Derived guesthouse details from Booking.bed.room.guestHouse
     private Long guestHouseId;
     private String guestHouseName;
-    private String guestHouseLocation; // From GuestHouse entity's location
+    private String guestHouseLocation;
 
-    // Convenience derived dates for frontend (same as before)
-    private LocalDate checkInDate;  // Same as bookingDate
-    private LocalDate checkOutDate; // bookingDate + durationDays
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
 }

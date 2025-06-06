@@ -39,6 +39,14 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/login`, { email, password });
   }
 
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
+
   saveToken(token: string) {
     localStorage.setItem('jwt_token', token);
     // --- NEW: Update user role whenever a new token is saved ---

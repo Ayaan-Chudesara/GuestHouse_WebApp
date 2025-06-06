@@ -3,8 +3,8 @@ package com.app.guesthouse.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.NoArgsConstructor; // Added for explicit constructors
-import lombok.AllArgsConstructor; // Added for explicit constructors
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.util.List;
 
 @Entity
@@ -19,19 +19,19 @@ public class Room {
     private Long id;
 
     @NotBlank
-    private String roomNo; // Aligned with your provided field name
+    private String roomNo;
 
     @NotBlank
     private String roomType;
 
-    private Integer numberOfBeds; // Confirmed: Capacity of the room
+    private Integer numberOfBeds;
 
-    @ManyToOne(fetch = FetchType.LAZY) // A room belongs to one guesthouse
-    @JoinColumn(name = "guest_house_id", nullable = false) // Foreign key column
-    private GuestHouse guestHouse; // Reference to GuestHouse entity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guest_house_id", nullable = false)
+    private GuestHouse guestHouse;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Bed> beds; // A room can have multiple physical beds
+    private List<Bed> beds;
 
     private double pricePerNight;
 }

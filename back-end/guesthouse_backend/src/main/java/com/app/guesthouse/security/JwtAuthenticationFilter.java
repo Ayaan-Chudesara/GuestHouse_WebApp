@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        // Add debug logging
+
         System.out.println("Request URL: " + request.getRequestURL());
         System.out.println("Request Method: " + request.getMethod());
 
@@ -39,13 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         String email = null;
 
-        // Add debug logging
+
         System.out.println("Authorization header: " + header);
 
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
             email = jwtUtil.extractUsername(token);
-            // Add debug logging
+
             System.out.println("Token found: " + token.substring(0, Math.min(token.length(), 10)) + "...");
             System.out.println("Extracted email: " + email);
         } else {
@@ -56,11 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             if (jwtUtil.isTokenValid(token, email)) {
-                // ✅ Extract role from token and prefix with "ROLE_"
                 String role = jwtUtil.extractRole(token);
                 var authority = new SimpleGrantedAuthority("ROLE_" + role);
 
-                // ✅ Inject authority manually into the AuthenticationToken
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(userDetails, null, Collections.singletonList(authority));
 

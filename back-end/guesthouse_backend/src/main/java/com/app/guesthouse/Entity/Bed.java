@@ -3,8 +3,8 @@ package com.app.guesthouse.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.NoArgsConstructor; // Added for explicit constructors
-import lombok.AllArgsConstructor; // Added for explicit constructors
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Data
@@ -18,13 +18,13 @@ public class Bed {
     private Long id;
 
     @NotBlank
-    private String bedNo; // e.g., "A", "B", or "1" if it's the only bed in a single room
+    private String bedNo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // Status of this specific bed
+    private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY) // A bed belongs to one room
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 

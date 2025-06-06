@@ -159,22 +159,3 @@ tr:last-child td {
 .mat-mdc-button.mat-warn {
   color: var(--dark-warn); /* Warn color for warn text buttons */
 }
-
-/* Optional: Styling for action buttons within the table (if you uncomment them) */
-/*
-td .mat-icon-button {
-  width: 36px;
-  height: 36px;
-  line-height: 36px;
-  margin-right: 8px;
-}
-td .mat-icon-button .mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-  color: var(--dark-primary);
-}
-td .mat-icon-button.mat-warn .mat-icon {
-  color: var(--dark-warn);
-}
-*/

@@ -29,7 +29,7 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     private BedRepo bedRepo;
 
-    // ➕ Create Room
+
     public RoomDTO createRoom(RoomDTO roomDTO) {
         Room room = new Room();
         room.setRoomNo(roomDTO.getRoomNo());
@@ -46,7 +46,6 @@ public class RoomServiceImpl implements RoomService {
         return mapToDTO(savedRoom);
     }
 
-    // 📋 Get All Rooms
     public List<RoomDTO> getAllRooms() {
         return roomRepository.findAll()
                 .stream()
@@ -54,14 +53,12 @@ public class RoomServiceImpl implements RoomService {
                 .collect(Collectors.toList());
     }
 
-    // 📄 Get Room by ID
     public RoomDTO getRoomById(Long id) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
         return mapToDTO(room);
     }
 
-    // ✏️ Update Room
     public RoomDTO updateRoom(Long id, RoomDTO roomDTO) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
@@ -79,7 +76,6 @@ public class RoomServiceImpl implements RoomService {
         return mapToDTO(updated);
     }
 
-    // ❌ Delete Room
     public void deleteRoom(Long id) {
         if (!roomRepository.existsById(id)) {
             throw new EntityNotFoundException("Room not found");
@@ -87,7 +83,6 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.deleteById(id);
     }
 
-    // 🔁 Mapping Room → RoomDTO
     private RoomDTO mapToDTO(Room room) {
         RoomDTO dto = new RoomDTO();
         dto.setId(room.getId());
@@ -113,7 +108,6 @@ public class RoomServiceImpl implements RoomService {
             String roomType,
             Integer numberOfGuests) {
 
-        // Find available beds based on the criteria
         List<Bed> availableBeds = bedRepo.findAvailableBedsByCriteria(
             guestHouseId,
             roomType,
@@ -122,13 +116,11 @@ public class RoomServiceImpl implements RoomService {
             checkOutDate
         );
 
-        // Get unique rooms from available beds
         List<Room> availableRooms = availableBeds.stream()
             .map(Bed::getRoom)
             .distinct()
             .collect(Collectors.toList());
 
-        // Convert rooms to DTOs
         return availableRooms.stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());

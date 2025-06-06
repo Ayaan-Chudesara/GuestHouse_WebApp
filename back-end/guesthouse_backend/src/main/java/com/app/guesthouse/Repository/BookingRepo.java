@@ -20,10 +20,9 @@ public interface BookingRepo extends JpaRepository<Booking, Long>, JpaSpecificat
 
     long countByStatus(Booking.Status status);
 
-    // Your existing query to find bookings that overlap with a given date range for a specific bed
     @Query("SELECT b FROM Booking b " +
             "WHERE b.bed.id = :bedId " +
-            "AND b.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " + // Consider relevant active statuses
+            "AND b.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
             "AND (" +
             "    (b.bookingDate < :endDate AND FUNCTION('DATE_ADD', b.bookingDate, 'DAY', b.durationDays) > :startDate)" +
             ")")
@@ -32,12 +31,11 @@ public interface BookingRepo extends JpaRepository<Booking, Long>, JpaSpecificat
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    // --- NEW METHOD ADDED: findOverlappingBookingsForBedExcludingCurrent ---
-    // Finds active overlapping bookings for a given bed, excluding a specific booking ID (the one being deleted/updated)
+
     @Query("SELECT bo FROM Booking bo WHERE bo.bed.id = :bedId " +
-            "AND bo.id != :excludedBookingId " + // Exclude the current booking being processed
-            "AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " + // Consider active statuses
-            "AND (" + // Overlap condition:
+            "AND bo.id != :excludedBookingId " +
+            "AND bo.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
+            "AND (" +
             "    (bo.bookingDate < :newBookingCheckOutDate AND FUNCTION('DATE_ADD', bo.bookingDate, 'DAY', bo.durationDays) > :newBookingCheckInDate)" +
             ")")
     List<Booking> findOverlappingBookingsForBedExcludingCurrent(
@@ -46,5 +44,4 @@ public interface BookingRepo extends JpaRepository<Booking, Long>, JpaSpecificat
             @Param("newBookingCheckOutDate") LocalDate newBookingCheckOutDate,
             @Param("excludedBookingId") Long excludedBookingId
     );
-    // --- END NEW METHOD ---
 }

@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AdminBookingComponent {
   bookingForm!: FormGroup;
-  guestHouses: any[] = []; // Using 'any[]' for simplicity as requested
+  guestHouses: any[] = []; 
 
   // Dashboard Stats
   dashboardStats: any = {}; // To hold data from /api/admin/dashboard/stats

@@ -1,4 +1,3 @@
-/* Direct application of theme colors as requested */
 
 /* Main container and card styling */
 .booking-container {
@@ -29,19 +28,19 @@
 }
 
 .mat-card-title {
-  color: #FFFFFF; /* KEY CHANGE: Mat Card Title to pure white */
+  color: #FFFFFF; 
   font-size: 2.2em;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
 .mat-card-subtitle {
-  color: #FFFFFF; /* Already white, keeping for clarity */
+  color: #FFFFFF; /*  keeping for clarity */
   font-size: 1em;
 }
 
 h3 {
-  color: #FFFFFF; /* KEY CHANGE: H3 (section headers) to pure white */
+  color: #FFFFFF; /*  pure white */
   margin-top: 30px;
   margin-bottom: 18px;
   font-size: 1.5em;
@@ -50,7 +49,7 @@ h3 {
   padding-bottom: 10px;
 }
 
-/* Form field styling (no change from last version) */
+/* Form field styling  */
 .full-width {
   width: 100%;
   margin-bottom: 20px;
@@ -108,9 +107,9 @@ h3 {
     color: rgba(0, 0, 0, 0.6) !important; /* Dark grey for the calendar icon on white background */
   }
 
-  /* BUTTONS - KEY CHANGES START HERE */
+  /* BUTTONS */
   .mat-mdc-raised-button.mat-primary,
-  .mat-mdc-unelevated-button.mat-primary { /* Also include un-elevated if you use it */
+  .mat-mdc-unelevated-button.mat-primary {
     background-color: #FFFFFF !important; /* KEY CHANGE: Primary button background to pure white */
     color: #02030c !important; /* Near-black text on white button */
     font-weight: 600;
@@ -126,7 +125,12 @@ h3 {
   }
 
   .mat-mdc-button { /* For regular text buttons, like "Clear Form" */
-    color: #FFFFFF !important; /* KEY CHANGE: Text button color to pure white */
+    color: #FFFFFF !important; /* 
+    
+    
+    
+    
+     Text button color to pure white */
     font-weight: 500;
     transition: background-color 0.2s ease;
     border-radius: 5px;

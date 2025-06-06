@@ -17,7 +17,7 @@ public class BedDTO {
     private String bedNo;
     private Bed.Status status;
 
-    private Long roomId;     // lightweight linkage
+    private Long roomId;
     private String roomNo;
 
 

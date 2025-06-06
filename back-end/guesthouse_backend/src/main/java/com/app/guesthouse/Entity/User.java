@@ -1,16 +1,16 @@
 package com.app.guesthouse.Entity;
 
 import jakarta.persistence.*;
-import lombok.*; // Ensure these imports are present for Lombok
+import lombok.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "user") // Keep it as "user" since that's your existing table
-@Data // Lombok: Generates getters, setters, equals, hashCode, toString
-@NoArgsConstructor // Lombok: Generates a no-argument constructor
-@AllArgsConstructor // Lombok: Generates a constructor with all fields
+@Table(name = "user")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -18,7 +18,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    private String name; // This is the full name (e.g., "John Doe")
+    private String name;
 
     @Email
     @Column(unique = true, nullable = false)

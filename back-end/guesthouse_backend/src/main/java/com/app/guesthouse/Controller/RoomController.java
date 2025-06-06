@@ -14,12 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
-//@CrossOrigin(origins = "*") // adjust for frontend origin if needed
 public class RoomController {
     @Autowired
     private RoomService roomService;
 
-    // ➕ Create Room
     @PostMapping
     public ResponseEntity<RoomDTO> createRoom(@Valid @RequestBody RoomDTO roomDTO) {
         try {
@@ -30,7 +28,6 @@ public class RoomController {
         }
     }
 
-    // 📋 Get All Rooms
     @GetMapping
     public ResponseEntity<List<RoomDTO>> getAllRooms() {
         try {
@@ -41,7 +38,6 @@ public class RoomController {
         }
     }
 
-    // 📄 Get Room by ID
     @GetMapping("/{id}")
     public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long id) {
         try {
@@ -52,7 +48,6 @@ public class RoomController {
         }
     }
 
-    // ✏️ Update Room
     @PutMapping("/{id}")
     public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomDTO roomDTO) {
         try {
@@ -63,7 +58,6 @@ public class RoomController {
         }
     }
 
-    // ❌ Delete Room
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
         try {
@@ -74,7 +68,6 @@ public class RoomController {
         }
     }
 
-    // 🔍 Search Available Rooms
     @GetMapping("/available")
     public ResponseEntity<List<RoomDTO>> searchAvailableRooms(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
@@ -91,7 +84,6 @@ public class RoomController {
         }
     }
 
-    // 📋 Get Room Types
     @GetMapping("/types")
     public ResponseEntity<List<String>> getRoomTypes() {
         try {
