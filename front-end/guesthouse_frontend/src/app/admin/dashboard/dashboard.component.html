@@ -145,7 +145,15 @@
       </div>
 
       <div *ngIf="totalBeds !== null" class="total-beds-display">
-        Total Beds: <strong>{{ totalBeds }}</strong>
+        <div class="total-beds-card">
+          <div class="total-beds-label">Total Available Beds</div>
+          <div class="total-beds-value">{{ totalBeds }}</div>
+          <div class="total-beds-dates" *ngIf="startDate && endDate">
+            <span>{{ startDate | date:'mediumDate' }}</span>
+            <span class="date-separator">to</span>
+            <span>{{ endDate | date:'mediumDate' }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

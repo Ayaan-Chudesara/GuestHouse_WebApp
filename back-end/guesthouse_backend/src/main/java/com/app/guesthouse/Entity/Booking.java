@@ -1,7 +1,7 @@
 package com.app.guesthouse.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data; // Consolidated to @Data which includes @Getter, @Setter
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,7 +24,7 @@ public class Booking {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_booking_user"))
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bed_id", nullable = false)
     private Bed bed;
 
@@ -51,6 +51,7 @@ public class Booking {
         APPROVED,
         REJECTED,
         CHECKED_IN,
-        CANCELLED, CHECKED_OUT
+        CANCELLED,
+        CHECKED_OUT
     }
 }

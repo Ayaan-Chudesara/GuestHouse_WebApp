@@ -21,7 +21,6 @@ public interface BedRepo extends JpaRepository<Bed, Long> {
             "WHERE b.status = 'AVAILABLE' " +
             "AND gh.id = :guestHouseId " +
             "AND r.room_type = :roomType " +
-            "AND r.number_of_beds >= :roomCapacity " +
             "AND NOT EXISTS (" +
             "   SELECT 1 FROM bookings bo " +
             "   WHERE bo.bed_id = b.id " +

@@ -16,15 +16,12 @@ import java.time.LocalDateTime;
 public class BookingDTO {
 
     private Long id;
-
-
     private LocalDate bookingDate;
     private Integer durationDays;
     private String purpose;
     private Booking.Status status;
     private LocalDateTime createdAt;
     private Integer numberOfGuests;
-
 
     private Long userId;
     private String guestName;

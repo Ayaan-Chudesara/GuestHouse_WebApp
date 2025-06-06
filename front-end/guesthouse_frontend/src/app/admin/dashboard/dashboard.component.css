@@ -95,8 +95,82 @@
 }
 
 .total-beds-display {
-  margin-top: 10px;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.total-beds-card {
+  background: linear-gradient(135deg, rgba(16, 36, 84, 0.9), rgba(2, 3, 12, 0.95));
+  border-radius: 15px;
+  padding: 25px 40px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 300px;
+}
+
+.total-beds-label {
+  font-size: 1.2rem;
+  color: #a0b9ff;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.total-beds-value {
+  font-size: 3.5rem;
   font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(63, 102, 255, 0.5);
+  margin: 10px 0;
+}
+
+.total-beds-dates {
+  margin-top: 15px;
+  color: #8ba3e8;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-separator {
+  color: #4a5d8f;
+  font-weight: 500;
+}
+
+/* Enhance date inputs section */
+.date-inputs {
+  background: rgba(16, 36, 84, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.date-inputs mat-form-field {
+  min-width: 200px;
+}
+
+.date-inputs button {
+  height: 56px;
+  padding: 0 30px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #3f66ff, #2b4ccc);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.date-inputs button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(63, 102, 255, 0.3);
 }
 
 /* Flex container for Scheduler and Total Beds */

@@ -68,9 +68,9 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Room Type</mat-label>
           <mat-select formControlName="roomType">
-            <mat-option value="single">Single Room</mat-option>
-            <mat-option value="double">Double Room</mat-option>
-            <mat-option value="suite">Suite</mat-option>
+            <mat-option value="Single Room">Single Room</mat-option>
+            <mat-option value="Double Room">Double Room</mat-option>
+            <mat-option value="Suite">Suite</mat-option>
           </mat-select>
           <mat-error *ngIf="bookingForm.get('roomType')?.hasError('required') && bookingForm.get('roomType')?.touched">
             Room Type is required.

@@ -14,7 +14,7 @@ public interface AdminService {
 
     Map<String, Object> getDashboardStats();
     List<BookingDTO> getSchedulerData(String start, String end);
-    Integer getTotalBeds();
+    Integer getTotalBeds(LocalDate startDate, LocalDate endDate);
 
 
     void deleteBooking(Long id);

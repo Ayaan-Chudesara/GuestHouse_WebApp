@@ -20,12 +20,13 @@ public interface BookingRepo extends JpaRepository<Booking, Long>, JpaSpecificat
 
     long countByStatus(Booking.Status status);
 
-    @Query("SELECT b FROM Booking b " +
-            "WHERE b.bed.id = :bedId " +
+    @Query(value = "SELECT b.* FROM bookings b " +
+            "WHERE b.bed_id = :bedId " +
             "AND b.status IN ('PENDING', 'APPROVED', 'CHECKED_IN') " +
-            "AND (" +
-            "    (b.bookingDate < :endDate AND FUNCTION('DATE_ADD', b.bookingDate, 'DAY', b.durationDays) > :startDate)" +
-            ")")
+            "AND NOT (" +
+            "    b.booking_date >= :endDate " +
+            "    OR DATE_ADD(b.booking_date, INTERVAL b.duration_days DAY) <= :startDate" +
+            ")", nativeQuery = true)
     List<Booking> findOverlappingBookingsForBed(
             @Param("bedId") Long bedId,
             @Param("startDate") LocalDate startDate,

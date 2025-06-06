@@ -167,8 +167,18 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard/total-beds")
-    public ResponseEntity<Integer> getTotalBeds() {
-        return ResponseEntity.ok(adminService.getTotalBeds());
+    public ResponseEntity<Integer> getTotalBeds(
+            @RequestParam(required = false) String start,
+            @RequestParam(required = false) String end) {
+        try {
+            LocalDate startDate = start != null ? LocalDate.parse(start) : null;
+            LocalDate endDate = end != null ? LocalDate.parse(end) : null;
+            return ResponseEntity.ok(adminService.getTotalBeds(startDate, endDate));
+        } catch (Exception e) {
+            System.err.println("Error getting total beds: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/bookings/create-by-admin")

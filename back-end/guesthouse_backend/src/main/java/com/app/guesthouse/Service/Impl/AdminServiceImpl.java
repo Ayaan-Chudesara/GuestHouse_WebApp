@@ -207,8 +207,54 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Integer getTotalBeds() {
-        return (int) bedRepo.count();
+    public Integer getTotalBeds(LocalDate startDate, LocalDate endDate) {
+        try {
+            if (startDate == null || endDate == null) {
+                return (int) bedRepo.count();
+            }
+
+            System.out.println("Searching for available beds between " + startDate + " and " + endDate);
+
+            // Get all beds
+            List<Bed> allBeds = bedRepo.findAll();
+            System.out.println("Total beds in system: " + allBeds.size());
+
+            // Count available beds
+            int availableBeds = 0;
+            for (Bed bed : allBeds) {
+                System.out.println("\nChecking bed ID: " + bed.getId() + ", Number: " + bed.getBedNo());
+                System.out.println("Bed status: " + bed.getStatus());
+
+                // Check for overlapping bookings regardless of bed status
+                List<Booking> overlappingBookings = bookingRepo.findOverlappingBookingsForBed(
+                    bed.getId(),
+                    startDate,
+                    endDate
+                );
+                
+                System.out.println("Found " + overlappingBookings.size() + " overlapping bookings");
+                if (overlappingBookings.isEmpty()) {
+                    System.out.println("Bed " + bed.getId() + " is available for the date range");
+                    availableBeds++;
+                } else {
+                    System.out.println("Overlapping bookings found for bed " + bed.getId() + ":");
+                    for (Booking booking : overlappingBookings) {
+                        System.out.println("  - Booking ID: " + booking.getId() + 
+                                         ", Date: " + booking.getBookingDate() + 
+                                         ", Duration: " + booking.getDurationDays() + 
+                                         ", Status: " + booking.getStatus());
+                    }
+                }
+            }
+
+            System.out.println("\nFinal count of available beds: " + availableBeds);
+            return availableBeds;
+
+        } catch (Exception e) {
+            System.err.println("Error in getTotalBeds: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

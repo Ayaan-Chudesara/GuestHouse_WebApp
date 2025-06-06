@@ -6,10 +6,12 @@ import com.app.guesthouse.Entity.Bed;
 import com.app.guesthouse.Entity.Booking;
 import com.app.guesthouse.Entity.Room;
 import com.app.guesthouse.Entity.User;
+import com.app.guesthouse.Entity.GuestHouse;
 import com.app.guesthouse.Repository.BedRepo;
 import com.app.guesthouse.Repository.BookingRepo;
 import com.app.guesthouse.Repository.UserRepo;
 import com.app.guesthouse.Repository.RoomRepo;
+import com.app.guesthouse.Repository.GuestHouseRepo;
 import com.app.guesthouse.Service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -30,14 +33,16 @@ public class BookingServiceImpl implements BookingService {
     private final BedRepo bedRepo;
     private final UserRepo userRepo;
     private final RoomRepo roomRepo;
+    private final GuestHouseRepo guestHouseRepo;
     private final MailServiceImpl mailService;
 
     @Autowired
-    public BookingServiceImpl(BookingRepo bookingRepo, BedRepo bedRepo, UserRepo userRepo, RoomRepo roomRepo, MailServiceImpl mailService) {
+    public BookingServiceImpl(BookingRepo bookingRepo, BedRepo bedRepo, UserRepo userRepo, RoomRepo roomRepo, GuestHouseRepo guestHouseRepo, MailServiceImpl mailService) {
         this.bookingRepo = bookingRepo;
         this.bedRepo = bedRepo;
         this.userRepo = userRepo;
         this.roomRepo = roomRepo;
+        this.guestHouseRepo = guestHouseRepo;
         this.mailService = mailService;
     }
 
@@ -84,7 +89,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     public BookingDTO createBooking(BookingDTO bookingDTO) {
-
         System.out.println("Creating booking with details: " + 
             "userId=" + bookingDTO.getUserId() + ", " +
             "roomId=" + bookingDTO.getRoomId() + ", " +
@@ -92,6 +96,72 @@ public class BookingServiceImpl implements BookingService {
             "checkOutDate=" + bookingDTO.getCheckOutDate() + ", " +
             "numberOfGuests=" + bookingDTO.getNumberOfGuests());
 
+        // Validate input
+        validateBookingInput(bookingDTO);
+
+        User user = userRepo.findById(bookingDTO.getUserId())
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId()));
+        System.out.println("Found user: " + user.getName() + " (ID: " + user.getId() + ")");
+
+        Room room = roomRepo.findById(bookingDTO.getRoomId())
+                .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + bookingDTO.getRoomId()));
+        System.out.println("Found room: " + room.getRoomNo() + " (ID: " + room.getId() + ")");
+
+        // Calculate duration
+        long durationDays = ChronoUnit.DAYS.between(bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate());
+
+        // Find available beds
+        List<Bed> availableBeds = bedRepo.findAvailableBedsByCriteria(
+                room.getGuestHouse().getId(),
+                room.getRoomType(),
+                bookingDTO.getNumberOfGuests(),
+                bookingDTO.getCheckInDate(),
+                bookingDTO.getCheckOutDate()
+        );
+
+        if (availableBeds.size() < bookingDTO.getNumberOfGuests()) {
+            throw new IllegalStateException(
+                String.format("Not enough beds available. Required: %d, Available: %d", 
+                    bookingDTO.getNumberOfGuests(), 
+                    availableBeds.size())
+            );
+        }
+
+        // Create a booking for each bed needed
+        List<Booking> bookings = new ArrayList<>();
+        for (int i = 0; i < bookingDTO.getNumberOfGuests(); i++) {
+            Bed selectedBed = availableBeds.get(i);
+            
+            Booking booking = new Booking();
+            booking.setUser(user);
+            booking.setBed(selectedBed);
+            booking.setBookingDate(bookingDTO.getCheckInDate());
+            booking.setDurationDays((int) durationDays);
+            booking.setPurpose(bookingDTO.getPurpose());
+            booking.setStatus(Booking.Status.PENDING);
+            booking.setCreatedAt(LocalDateTime.now());
+            booking.setNumberOfGuests(1); // Each booking represents one guest/bed
+
+            selectedBed.setStatus(Bed.Status.BOOKED);
+            bedRepo.save(selectedBed);
+            
+            bookings.add(bookingRepo.save(booking));
+        }
+
+        // Send email notification
+        try {
+            for (Booking booking : bookings) {
+                mailService.sendBookingNotification(user.getEmail(), booking);
+            }
+        } catch (Exception e) {
+            System.err.println("Email sending failed: " + e.getMessage());
+        }
+
+        // Return the first booking's DTO (frontend can fetch others if needed)
+        return mapToDTO(bookings.get(0));
+    }
+
+    private void validateBookingInput(BookingDTO bookingDTO) {
         if (bookingDTO.getRoomId() == null) {
             throw new IllegalArgumentException("Room ID is required for booking.");
         }
@@ -101,17 +171,6 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDTO.getNumberOfGuests() == null || bookingDTO.getNumberOfGuests() < 1) {
             throw new IllegalArgumentException("Number of guests must be at least 1.");
         }
-
-        System.out.println("Checking if user exists with ID: " + bookingDTO.getUserId());
-        boolean userExists = userRepo.existsById(bookingDTO.getUserId());
-        if (!userExists) {
-            throw new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId() + ". Please ensure you are logged in correctly.");
-        }
-
-        User user = userRepo.findById(bookingDTO.getUserId())
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + bookingDTO.getUserId()));
-        System.out.println("Found user: " + user.getName() + " (ID: " + user.getId() + ")");
-
         if (bookingDTO.getCheckInDate() == null || bookingDTO.getCheckOutDate() == null) {
             throw new IllegalArgumentException("Check-in and Check-out dates are required for booking creation.");
         }
@@ -123,75 +182,10 @@ public class BookingServiceImpl implements BookingService {
         if (checkInDate.isBefore(today)) {
             throw new IllegalArgumentException("Check-in date cannot be in the past. Selected: " + checkInDate + ", Today: " + today);
         }
-
         if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
             throw new IllegalArgumentException("Check-out date must be after check-in date. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
         }
-
-        long durationDays = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
-        if (durationDays == 0) {
-            throw new IllegalArgumentException("Booking duration must be at least one day. Check-in: " + checkInDate + ", Check-out: " + checkOutDate);
-        }
-
-        Room room = roomRepo.findById(bookingDTO.getRoomId())
-                .orElseThrow(() -> new NoSuchElementException("Room not found with ID: " + bookingDTO.getRoomId()));
-        System.out.println("Found room: " + room.getRoomNo() + " (ID: " + room.getId() + ")");
-
-        if (bookingDTO.getNumberOfGuests() > room.getNumberOfBeds()) {
-            throw new IllegalArgumentException("Number of guests (" + bookingDTO.getNumberOfGuests() + 
-                ") exceeds room capacity (" + room.getNumberOfBeds() + ").");
-        }
-
-        List<Bed> availableBedsInRoom = bedRepo.findFirstAvailableBedInRoomForDates(
-                room.getId(),
-                checkInDate,
-                checkOutDate
-        );
-
-        if (availableBedsInRoom.isEmpty()) {
-            throw new IllegalStateException(
-                "No available beds found in Room " + room.getRoomNo() + 
-                " for the dates " + checkInDate + 
-                " to " + checkOutDate + 
-                ". Please select different dates or a different room."
-            );
-        }
-
-        Bed selectedBed = availableBedsInRoom.get(0);
-        System.out.println("Selected bed: " + selectedBed.getBedNo() + " (ID: " + selectedBed.getId() + ")");
-
-        Booking booking = new Booking();
-        booking.setUser(user);
-        booking.setBed(selectedBed);
-        booking.setBookingDate(checkInDate);
-        booking.setDurationDays((int) durationDays);
-        booking.setPurpose(bookingDTO.getPurpose());
-        booking.setStatus(Booking.Status.PENDING);
-        booking.setCreatedAt(LocalDateTime.now());
-        booking.setNumberOfGuests(bookingDTO.getNumberOfGuests());
-
-        selectedBed.setStatus(Bed.Status.BOOKED);
-        bedRepo.save(selectedBed);
-        System.out.println("Updated bed status to BOOKED");
-
-        try {
-            Booking saved = bookingRepo.save(booking);
-            System.out.println("Successfully created booking with ID: " + saved.getId());
-            
-            try {
-                mailService.sendBookingNotification(saved.getUser().getEmail(), saved);
-            } catch (Exception e) {
-                System.err.println("Email sending failed for booking " + saved.getId() + ": " + e.getMessage());
-            }
-
-            return mapToDTO(saved);
-        } catch (Exception e) {
-            System.err.println("Error saving booking: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
-
 
     public List<BookingDTO> getAllBookings() {
         return bookingRepo.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
@@ -279,21 +273,25 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void createBookingAsAdmin(AdminBookingRequestDTO request) {
         try {
+            System.out.println("\n=== Starting Admin Booking Creation ===");
+            System.out.println("Guest House ID: " + request.getGuestHouseId());
+            System.out.println("Room Type: " + request.getRoomType());
+            System.out.println("Number of Beds: " + request.getNumberOfBeds());
+            System.out.println("Check-in Date: " + request.getCheckInDate());
+            System.out.println("Check-out Date: " + request.getCheckOutDate());
 
-            if (request.getGuestName() == null || request.getGuestName().trim().isEmpty()) {
-                throw new IllegalArgumentException("Guest name is required");
-            }
-            if (request.getGuestEmail() == null || request.getGuestEmail().trim().isEmpty()) {
-                throw new IllegalArgumentException("Guest email is required");
-            }
-            if (request.getGuestHouseId() == null) {
-                throw new IllegalArgumentException("Guesthouse ID is required");
-            }
-            if (request.getRoomType() == null || request.getRoomType().trim().isEmpty()) {
-                throw new IllegalArgumentException("Room type is required");
-            }
-            if (request.getNumberOfBeds() <= 0) {
-                throw new IllegalArgumentException("Number of beds must be greater than 0");
+            validateAdminBookingRequest(request);
+
+            // First check if the guest house exists
+            GuestHouse guestHouse = guestHouseRepo.findById(request.getGuestHouseId())
+                    .orElseThrow(() -> new NoSuchElementException("Guest House not found with ID: " + request.getGuestHouseId()));
+            System.out.println("Found Guest House: " + guestHouse.getName());
+
+            // Check if there are any rooms of the requested type
+            List<Room> rooms = roomRepo.findByGuestHouseIdAndRoomType(request.getGuestHouseId(), request.getRoomType());
+            System.out.println("Found " + rooms.size() + " rooms of type " + request.getRoomType());
+            if (rooms.isEmpty()) {
+                throw new IllegalStateException("No rooms found of type " + request.getRoomType() + " in the selected guest house");
             }
 
             User user = userRepo.findByEmail(request.getGuestEmail())
@@ -307,72 +305,108 @@ public class BookingServiceImpl implements BookingService {
                         return userRepo.save(newUser);
                     });
 
+            System.out.println("User found/created: " + user.getName());
 
-            if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
-                throw new IllegalArgumentException("Check-in and Check-out dates are required.");
-            }
-            if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
-                throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
-            }
-            if (request.getCheckInDate().isBefore(LocalDate.now())) {
-                throw new IllegalArgumentException("Check-in date cannot be in the past.");
-            }
             long durationDays = ChronoUnit.DAYS.between(request.getCheckInDate(), request.getCheckOutDate());
-            if (durationDays == 0) {
-                throw new IllegalArgumentException("Booking duration must be at least one day.");
-            }
+            System.out.println("Duration days: " + durationDays);
 
-            List<Bed> candidateBeds = bedRepo.findAvailableBedsByCriteria(
+            // Find available beds based on criteria
+            List<Bed> availableBeds = bedRepo.findAvailableBedsByCriteria(
                     request.getGuestHouseId(),
                     request.getRoomType(),
-                    request.getNumberOfBeds(),
+                    1, // We only need rooms with at least 1 bed since we're booking individual beds
                     request.getCheckInDate(),
                     request.getCheckOutDate()
             );
 
-            if (candidateBeds.isEmpty()) {
-                throw new IllegalStateException(
-                    String.format("No available beds found for guesthouse ID %d, room type %s, capacity %d, dates %s to %s",
-                        request.getGuestHouseId(),
-                        request.getRoomType(),
-                        request.getNumberOfBeds(),
-                        request.getCheckInDate(),
-                        request.getCheckOutDate())
-                );
+            System.out.println("\n=== Available Beds Search Results ===");
+            System.out.println("Total available beds found: " + availableBeds.size());
+            for (Bed bed : availableBeds) {
+                System.out.println("Bed ID: " + bed.getId() + 
+                    ", No: " + bed.getBedNo() + 
+                    ", Room: " + bed.getRoom().getRoomNo() + 
+                    ", Type: " + bed.getRoom().getRoomType() +
+                    ", Status: " + bed.getStatus());
             }
 
-            Bed selectedBed = candidateBeds.get(0);
-
-            Booking booking = new Booking();
-            booking.setUser(user);
-            booking.setBed(selectedBed);
-            booking.setBookingDate(request.getCheckInDate());
-            booking.setDurationDays((int) durationDays);
-            booking.setPurpose(request.getPurpose());
-            booking.setCreatedAt(LocalDateTime.now());
-            booking.setStatus(Booking.Status.APPROVED);
-            
-
-            int numberOfGuests = request.getNumberOfGuests();
-            if (numberOfGuests <= 0) {
-                numberOfGuests = request.getNumberOfBeds();
+            if (availableBeds.size() < request.getNumberOfBeds()) {
+                String errorMsg = String.format("Not enough beds available. Required: %d, Available: %d",
+                    request.getNumberOfBeds(),
+                    availableBeds.size());
+                System.err.println(errorMsg);
+                throw new IllegalStateException(errorMsg);
             }
-            booking.setNumberOfGuests(numberOfGuests);
 
-            selectedBed.setStatus(Bed.Status.BOOKED);
-            bedRepo.save(selectedBed);
+            // Create a booking for each bed
+            List<Booking> bookings = new ArrayList<>();
+            for (int i = 0; i < request.getNumberOfBeds(); i++) {
+                Bed selectedBed = availableBeds.get(i);
+                System.out.println("\nCreating booking for bed: " + selectedBed.getBedNo());
 
-            Booking savedBooking = bookingRepo.save(booking);
+                Booking booking = new Booking();
+                booking.setUser(user);
+                booking.setBed(selectedBed);
+                booking.setBookingDate(request.getCheckInDate());
+                booking.setDurationDays((int) durationDays);
+                booking.setPurpose(request.getPurpose());
+                booking.setCreatedAt(LocalDateTime.now());
+                booking.setStatus(Booking.Status.APPROVED); // Admin bookings are auto-approved
+                
+                int guestsPerBed = request.getNumberOfGuests() / request.getNumberOfBeds();
+                if (i < request.getNumberOfGuests() % request.getNumberOfBeds()) {
+                    guestsPerBed++; // Distribute any remaining guests
+                }
+                booking.setNumberOfGuests(guestsPerBed);
 
+                selectedBed.setStatus(Bed.Status.BOOKED);
+                bedRepo.save(selectedBed);
+                
+                bookings.add(bookingRepo.save(booking));
+                System.out.println("Created booking ID: " + booking.getId());
+            }
+
+            // Send email notifications
             try {
-                mailService.sendBookingNotification(user.getEmail(), savedBooking);
+                for (Booking booking : bookings) {
+                    mailService.sendBookingNotification(user.getEmail(), booking);
+                }
             } catch (Exception e) {
                 System.err.println("Email sending failed for admin-created booking: " + e.getMessage());
             }
+
+            System.out.println("\n=== Admin Booking Creation Completed ===");
         } catch (Exception e) {
-            System.err.println("Error in createBookingAsAdmin: " + e.getMessage());
+            System.err.println("\n=== Error in createBookingAsAdmin ===");
+            System.err.println("Error message: " + e.getMessage());
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    private void validateAdminBookingRequest(AdminBookingRequestDTO request) {
+        if (request.getGuestName() == null || request.getGuestName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Guest name is required");
+        }
+        if (request.getGuestEmail() == null || request.getGuestEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Guest email is required");
+        }
+        if (request.getGuestHouseId() == null) {
+            throw new IllegalArgumentException("Guesthouse ID is required");
+        }
+        if (request.getRoomType() == null || request.getRoomType().trim().isEmpty()) {
+            throw new IllegalArgumentException("Room type is required");
+        }
+        if (request.getNumberOfBeds() <= 0) {
+            throw new IllegalArgumentException("Number of beds must be greater than 0");
+        }
+        if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
+            throw new IllegalArgumentException("Check-in and Check-out dates are required.");
+        }
+        if (request.getCheckOutDate().isBefore(request.getCheckInDate())) {
+            throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
+        }
+        if (request.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Check-in date cannot be in the past.");
         }
     }
 }

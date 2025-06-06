@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
