@@ -170,3 +170,7 @@ The application uses MySQL 8 with the following configuration in application.pro
    - Database indexing
    - Lazy loading for entity relationships
    - Frontend optimization using Angular best practices 
+
+::ng-deep .mdc-label {
+  color: #FFFFFF !important;
+} 

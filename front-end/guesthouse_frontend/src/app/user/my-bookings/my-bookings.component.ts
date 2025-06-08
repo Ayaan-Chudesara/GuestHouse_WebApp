@@ -11,7 +11,7 @@ import { BookingServiceService } from '../services/booking-service.service';
   styleUrls: ['./my-bookings.component.css']
 })
 export class MyBookingsComponent {
- // Array to hold the bookings fetched from the backend
+  // Array to hold the bookings fetched from the backend
   bookings: Booking[] = [];
   // State variables for UI feedback
   isLoading: boolean = true; // True while data is being fetched
@@ -27,9 +27,7 @@ export class MyBookingsComponent {
     'checkInDate',
     'checkOutDate',
     'numberOfGuests',
-    'totalPrice',
-    'status',
-    // 'actions' // Uncomment this if you decide to add action buttons (e.g., cancel, view details)
+    'status'
   ];
 
   // Subject to manage component unsubscriptions, preventing memory leaks

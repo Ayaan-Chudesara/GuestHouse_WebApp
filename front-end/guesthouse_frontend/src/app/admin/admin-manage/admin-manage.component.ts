@@ -4,9 +4,11 @@ import { forkJoin } from 'rxjs';
 import { Bed, BedStatus } from 'src/app/core/models/bed.model';
 import { GuestHouse } from 'src/app/core/models/guesthouse.model';
 import { Room } from 'src/app/core/models/room.model';
+import { User } from 'src/app/core/models/user.model';
 import { BedService } from '../services/bed.service';
 import { RoomService } from '../services/room.service';
 import { GuesthouseService } from '../services/guesthouse.service';
+import { AdminPanelService } from '../services/admin-panel.service';
 
 @Component({
   selector: 'app-admin-manage',
@@ -19,6 +21,7 @@ export class AdminManageComponent implements OnInit { // <--- Implemented OnInit
   guesthouses: GuestHouse[] = [];
   rooms: Room[] = [];
   beds: Bed[] = [];
+  users: User[] = [];
 
   // Form related properties
   selectedGuestHouse: GuestHouse | null = null;
@@ -37,7 +40,8 @@ export class AdminManageComponent implements OnInit { // <--- Implemented OnInit
   constructor(
     private guesthouseService: GuesthouseService,
     private roomService: RoomService,
-    private bedService: BedService
+    private bedService: BedService,
+    private adminPanelService: AdminPanelService
   ) { }
 
   ngOnInit(): void {
@@ -49,13 +53,15 @@ export class AdminManageComponent implements OnInit { // <--- Implemented OnInit
     forkJoin([
       this.guesthouseService.getAllGuestHouses(),
       this.roomService.getAllRooms(),
-      this.bedService.getAllBeds()
+      this.bedService.getAllBeds(),
+      this.adminPanelService.getAllUsers()
     ]).subscribe({
-      next: ([guesthousesData, roomsData, bedsData]) => {
+      next: ([guesthousesData, roomsData, bedsData, usersData]) => {
         this.guesthouses = guesthousesData;
         this.rooms = roomsData;
         this.beds = bedsData;
-        console.log('All data loaded:', { guesthouses: guesthousesData, rooms: roomsData, beds: bedsData });
+        this.users = usersData;
+        console.log('All data loaded:', { guesthouses: guesthousesData, rooms: roomsData, beds: bedsData, users: usersData });
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error loading all data:', error);
@@ -325,5 +331,26 @@ export class AdminManageComponent implements OnInit { // <--- Implemented OnInit
   cancelBedForm(): void {
     this.selectedBed = null;
     this.showBedForm = false;
+  }
+
+  // --- User Management Operations ---
+  onDeleteUser(userId: number | undefined): void {
+    if (userId === undefined) {
+      console.warn('Cannot delete user: ID is undefined.');
+      return;
+    }
+    if (confirm(`Are you sure you want to delete this user? This action cannot be undone.`)) {
+      this.adminPanelService.deleteUser(userId).subscribe({
+        next: () => {
+          console.log('User deleted successfully');
+          alert('User deleted successfully!');
+          this.loadAllData();
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error deleting user:', error);
+          alert(`Failed to delete user: ${error.error?.message || 'Server error'}`);
+        }
+      });
+    }
   }
 }

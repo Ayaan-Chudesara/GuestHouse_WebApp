@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
         dto.setRole(user.getRole());
         return dto;
     }

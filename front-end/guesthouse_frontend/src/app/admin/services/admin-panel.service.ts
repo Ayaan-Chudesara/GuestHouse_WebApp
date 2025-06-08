@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { GuesthouseService } from './guesthouse.service';
 import { GuestHouse } from 'src/app/core/models/guesthouse.model';
+import { User } from 'src/app/core/models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class AdminPanelService {
   ) { }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('jwt_token');
+    const token = this.authService.getToken();
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
@@ -48,9 +49,9 @@ export class AdminPanelService {
 
   // Method to get all users (for possible lookup or future features)
   // Maps to: GET /api/admin/all
-  getAllUsers(): Observable<any[]> {
+  getAllUsers(): Observable<User[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<any[]>(`${this.baseUrl}/users/all`, { headers });
+    return this.http.get<User[]>(`${this.baseUrl}/users/all`, { headers });
   }
 
   // Method to get all bookings (e.g., for a list on the admin panel)
@@ -85,5 +86,10 @@ export class AdminPanelService {
   // Placeholder for Guest Houses - still no direct backend API for this provided
   getGuestHouses(): Observable<GuestHouse[]> {
     return this.guestHouseService.getAllGuestHouses();
+  }
+
+  deleteUser(userId: number): Observable<void> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete<void>(`${this.baseUrl}/users/${userId}`, { headers });
   }
 }

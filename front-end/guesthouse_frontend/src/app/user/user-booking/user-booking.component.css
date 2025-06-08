@@ -1,3 +1,13 @@
+/* Variables for consistent colors and styling */
+:root {
+  --color-darkest-blue: #02030c;
+  --color-deep-blue: #0d1226;
+  --color-accent-blue-1: rgba(30, 58, 138, 0.4);
+  --color-accent-blue-2: #6B94FF;
+  --color-accent-blue-3: #c0c0c0;
+  --color-white: #FFFFFF;
+  --color-error: #FF6B6B;
+}
 
 /* --- Overall Page and Card Structure --- */
 .booking-container {
@@ -197,6 +207,51 @@ h3 {
       color: #FF6B6B !important; /* Red for the actual error message text */
   }
 
+  /* Override Material checkbox styles for dark theme */
+  .mdc-checkbox__native-control {
+    border-color: #FFFFFF !important;
+  }
+
+  .mdc-checkbox__background {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+  }
+
+  .mdc-checkbox__native-control:checked {
+    background-color: #FFFFFF !important;
+  }
+
+  .mdc-checkbox__checkmark {
+    color: #000000 !important;
+  }
+
+  .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true]) ~ .mdc-checkbox__background {
+    border-color: #FFFFFF !important;
+    background-color: transparent !important;
+  }
+
+  .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+    border-color: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+  }
+
+  .mdc-checkbox__checkmark-path {
+    stroke: #000000 !important;
+  }
+
+  /* Make the checkbox label text white */
+  .mdc-checkbox__label {
+    color: #FFFFFF !important;
+  }
+
+  .mdc-form-field > label {
+    color: #FFFFFF !important;
+  }
+
+  /* Ensure the text stays white in all states */
+  .mdc-form-field {
+    color: #FFFFFF !important;
+  }
 } /* End of ::ng-deep block */
 
 /* --- Info/Message Blocks --- */
@@ -409,28 +464,6 @@ h3 {
   display: block;
   margin-bottom: 8px;
   font-size: 0.95em;
-}
-
-/* Override Material checkbox styles for dark theme */
-::ng-deep .terms-checkbox .mat-checkbox-frame {
-  border-color: rgba(255, 255, 255, 0.7);
-  border-width: 1px;
-}
-
-::ng-deep .terms-checkbox .mat-checkbox-background {
-  background-color: #6B94FF !important;
-}
-
-::ng-deep .terms-checkbox .mat-checkbox-label {
-  color: #FFFFFF !important;
-}
-
-::ng-deep .terms-checkbox.mat-checkbox-checked .mat-checkbox-background {
-  background-color: #6B94FF !important;
-}
-
-::ng-deep .terms-checkbox .mat-checkbox-inner-container {
-  margin-right: 12px;
 }
 
 .terms-section mat-error {
