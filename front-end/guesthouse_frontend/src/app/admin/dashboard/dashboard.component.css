@@ -142,3 +142,49 @@
   color: #4a5d8f;
   font-weight: 500;
 }
+
+/* Datepicker Styles */
+::ng-deep .mat-datepicker-popup {
+  background-color: #FFFFFF !important;
+}
+
+::ng-deep .mat-calendar {
+  background-color: #FFFFFF !important;
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+  color: #000000 !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: #1A3A8A !important;
+  color: #FFFFFF !important;
+}
+
+::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: #1A3A8A !important;
+}
+
+::ng-deep .mat-calendar-arrow,
+::ng-deep .mat-calendar-next-button,
+::ng-deep .mat-calendar-previous-button {
+  color: #000000 !important;
+}
+
+::ng-deep .mat-calendar-table-header,
+::ng-deep .mat-calendar-body-label {
+  color: #000000 !important;
+}
+
+::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: rgba(26, 58, 138, 0.3) !important;
+}
+
+/* Datepicker dropdown arrow color */
+::ng-deep .mat-datepicker-toggle {
+  color: #FFFFFF !important;
+}
+
+::ng-deep .mat-datepicker-toggle-default-icon {
+  color: #FFFFFF !important;
+}
