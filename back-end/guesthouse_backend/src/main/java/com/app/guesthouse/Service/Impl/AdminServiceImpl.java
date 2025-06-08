@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.criteria.Expression;
+
 @Service
 public class AdminServiceImpl implements AdminService {
     private final UserRepo userRepo;
@@ -190,23 +192,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<BookingDTO> getSchedulerData(String start, String end) {
-        LocalDate startDate = LocalDate.parse(start);
-        LocalDate endDate = LocalDate.parse(end);
-
-        Specification<Booking> spec = (root, query, criteriaBuilder) -> {
-            Predicate overlapsStart = criteriaBuilder.lessThanOrEqualTo(root.get("bookingDate"), endDate);
-            Predicate overlapsEnd = criteriaBuilder.greaterThanOrEqualTo(
-                    criteriaBuilder.function("DATE_ADD", LocalDate.class, root.get("bookingDate"), criteriaBuilder.literal("DAY"), root.get("durationDays")),
-                    startDate
-            );
-            return criteriaBuilder.and(overlapsStart, overlapsEnd);
-        };
-        List<Booking> bookings = bookingRepo.findAll(spec);
-        return bookings.stream().map(this::mapToDTO).collect(Collectors.toList());
-    }
-
-    @Override
     public Integer getTotalBeds(LocalDate startDate, LocalDate endDate) {
         try {
             if (startDate == null || endDate == null) {
@@ -289,43 +274,42 @@ public class AdminServiceImpl implements AdminService {
             LocalDate checkOutDate,
             String status) {
 
-        Specification<Booking> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            Join<Booking, Bed> bedJoin = root.join("bed");
-            Join<Bed, Room> roomJoin = bedJoin.join("room");
-
-            if (guestHouseId != null) {
-                Join<Room, GuestHouse> guestHouseJoin = roomJoin.join("guestHouse");
-                predicates.add(criteriaBuilder.equal(guestHouseJoin.get("id"), guestHouseId));
-            }
-            if (roomType != null && !roomType.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(roomJoin.get("roomType"), roomType));
-            }
-
-            if (checkInDate != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("bookingDate"), checkInDate));
-            }
-            if (checkOutDate != null) {
-                predicates.add(
-                        criteriaBuilder.lessThanOrEqualTo(
-                                criteriaBuilder.function("DATE_ADD", LocalDate.class, root.get("bookingDate"), criteriaBuilder.literal("DAY"), root.get("durationDays")),
-                                checkOutDate
-                        )
-                );
-            }
-            if (status != null && !status.equalsIgnoreCase("ALL")) {
-                try {
-                    predicates.add(criteriaBuilder.equal(root.get("status"), Booking.Status.valueOf(status.toUpperCase())));
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid booking status provided for filter: " + status);
+        // Format room type if provided
+        String formattedRoomType = null;
+        if (roomType != null && !roomType.isEmpty()) {
+            String normalizedRoomType = roomType.toLowerCase()
+                .replace("_", " ")
+                .replace("-", " ");
+            String[] words = normalizedRoomType.split(" ");
+            StringBuilder titleCase = new StringBuilder();
+            for (String word : words) {
+                if (word.length() > 0) {
+                    titleCase.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
                 }
             }
+            formattedRoomType = titleCase.toString().trim();
+        }
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+        // Format status if provided
+        String formattedStatus = null;
+        if (status != null && !status.equalsIgnoreCase("ALL")) {
+            try {
+                formattedStatus = Booking.Status.valueOf(status.toUpperCase()).name();
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid booking status provided for filter: " + status);
+            }
+        }
 
-        List<Booking> filteredBookings = bookingRepo.findAll(spec);
+        List<Booking> filteredBookings = bookingRepo.findFilteredBookings(
+            guestHouseId,
+            formattedRoomType,
+            checkInDate,
+            checkOutDate,
+            formattedStatus
+        );
+
         return filteredBookings.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());

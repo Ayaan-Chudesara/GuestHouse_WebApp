@@ -14,7 +14,7 @@
       <label for="filterRoomType">Room Type:</label>
       <select id="filterRoomType" [(ngModel)]="filterRoomType">
         <option [ngValue]="null">All Room Types</option>
-        <option *ngFor="let rt of roomTypes" [ngValue]="rt">{{ rt }}</option>
+        <option *ngFor="let rt of roomTypes" [value]="rt">{{ rt }}</option>
       </select>
     </div>
 

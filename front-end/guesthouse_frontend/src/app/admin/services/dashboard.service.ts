@@ -14,16 +14,11 @@ private baseUrl = 'http://localhost:8080/api/admin/dashboard'; // adjust if need
     return this.http.get(`${this.baseUrl}/stats`);
   }
 
-  getSchedulerData(startDate: string, endDate: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/scheduler?start=${startDate}&end=${endDate}`);
-  }
-
   getTotalBeds(start?: string, end?: string): Observable<number> {
-  let url = `${this.baseUrl}/total-beds`;
-  if (start && end) {
-    url += `?start=${start}&end=${end}`;
+    let url = `${this.baseUrl}/total-beds`;
+    if (start && end) {
+      url += `?start=${start}&end=${end}`;
+    }
+    return this.http.get<number>(url);
   }
-  return this.http.get<number>(url);
-}
-
 }

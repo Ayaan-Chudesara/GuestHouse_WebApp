@@ -31,14 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-
         System.out.println("Request URL: " + request.getRequestURL());
         System.out.println("Request Method: " + request.getMethod());
 
         String header = request.getHeader("Authorization");
         String token = null;
         String email = null;
-
 
         System.out.println("Authorization header: " + header);
 
@@ -64,13 +62,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                System.out.println("Authentication set in SecurityContext");
+                System.out.println("Authentication set in SecurityContext with role: ROLE_" + role);
             }
         }
 
         chain.doFilter(request, response);
     }
-
-
-
 }

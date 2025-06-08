@@ -11,7 +11,7 @@ import { GuestHouse } from 'src/app/core/models/guesthouse.model';
 export class AdminPanelService {
   // This baseUrl is specifically for AdminController endpoints that are NOT under /dashboard
   // and for the /dashboard ones that are also needed for the admin panel.
-  private apiUrl = 'http://localhost:8080/api/admin';
+  private baseUrl = 'http://localhost:8080/api/admin';
 
   constructor(
     private http: HttpClient,
@@ -20,11 +20,8 @@ export class AdminPanelService {
   ) { }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+    const token = localStorage.getItem('jwt_token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
   // Method to create a booking using the AdminBookingRequestDTO
@@ -46,41 +43,41 @@ export class AdminPanelService {
       checkInDate: requestData.checkInDate.split('T')[0],
       checkOutDate: requestData.checkOutDate.split('T')[0]
     };
-    return this.http.post(`${this.apiUrl}/bookings/create-by-admin`, formattedRequest, { headers, responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/bookings/create-by-admin`, formattedRequest, { headers, responseType: 'text' });
   }
 
   // Method to get all users (for possible lookup or future features)
   // Maps to: GET /api/admin/all
   getAllUsers(): Observable<any[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<any[]>(`${this.apiUrl}/users/all`, { headers });
+    return this.http.get<any[]>(`${this.baseUrl}/users/all`, { headers });
   }
 
   // Method to get all bookings (e.g., for a list on the admin panel)
   // Maps to: GET /api/admin/allBookings
   getAllBookings(): Observable<any[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<any[]>(`${this.apiUrl}/allBookings`, { headers });
+    return this.http.get<any[]>(`${this.baseUrl}/allBookings`, { headers });
   }
 
   // --- Dashboard stats needed for AdminBookingComponent's overview ---
   // Maps to: GET /api/admin/dashboard/stats
   getDashboardStats(): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<any>(`${this.apiUrl}/dashboard/stats`, { headers });
+    return this.http.get(`${this.baseUrl}/dashboard/stats`);
   }
 
   // Maps to: GET /api/admin/dashboard/total-beds
-  getTotalBeds(): Observable<number> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<number>(`${this.apiUrl}/dashboard/total-beds`, { headers });
+  getTotalBeds(start?: string, end?: string): Observable<number> {
+    let url = `${this.baseUrl}/dashboard/total-beds`;
+    if (start && end) {
+      url += `?start=${start}&end=${end}`;
+    }
+    return this.http.get<number>(url);
   }
 
   // Maps to: GET /api/admin/dashboard/scheduler
   getSchedulerData(start: string, end: string): Observable<any[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<any[]>(`${this.apiUrl}/dashboard/scheduler`, {
-      headers,
+    return this.http.get<any[]>(`${this.baseUrl}/dashboard/scheduler`, {
       params: { start, end }
     });
   }

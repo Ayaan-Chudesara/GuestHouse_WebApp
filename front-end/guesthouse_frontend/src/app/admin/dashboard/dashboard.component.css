@@ -51,7 +51,7 @@
 /* Separate Sections */
 .separate-section {
   background:  rgba(2, 3, 12, 0.75);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 20px rgba(30, 58, 138, 0.5);;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 20px rgba(30, 58, 138, 0.5);
   border-radius: 15px;
   padding: 25px 30px;
   margin-bottom: 40px;
@@ -66,32 +66,34 @@
 }
 
 .date-inputs {
+  background: rgba(16, 36, 84, 0.3);
+  padding: 20px;
+  border-radius: 10px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin-top: 15px;
+  justify-content: center;
   align-items: center;
+  margin-top: 20px;
 }
 
-.date-inputs input[type="date"] {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  background: #0a1733;
-  color: white;
+.date-inputs mat-form-field {
+  min-width: 200px;
 }
 
 .date-inputs button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  background-color: #3f66ff;
-  color: white;
-  border: none;
-  cursor: pointer;
+  height: 56px;
+  padding: 0 30px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #3f66ff, #2b4ccc);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .date-inputs button:hover {
-  background-color: #608eff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(63, 102, 255, 0.3);
 }
 
 .total-beds-display {
@@ -139,52 +141,4 @@
 .date-separator {
   color: #4a5d8f;
   font-weight: 500;
-}
-
-/* Enhance date inputs section */
-.date-inputs {
-  background: rgba(16, 36, 84, 0.3);
-  padding: 20px;
-  border-radius: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.date-inputs mat-form-field {
-  min-width: 200px;
-}
-
-.date-inputs button {
-  height: 56px;
-  padding: 0 30px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: linear-gradient(135deg, #3f66ff, #2b4ccc);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.date-inputs button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(63, 102, 255, 0.3);
-}
-
-/* Flex container for Scheduler and Total Beds */
-.side-section-group {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 50px;
-}
-
-/* Make each section smaller when side by side */
-.small-section {
-  flex: 1 1 350px; 
-  max-width: 420px;
-  padding: 20px;
 }

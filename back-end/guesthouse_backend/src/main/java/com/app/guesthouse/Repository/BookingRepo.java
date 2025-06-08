@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,5 +45,22 @@ public interface BookingRepo extends JpaRepository<Booking, Long>, JpaSpecificat
             @Param("newBookingCheckInDate") LocalDate newBookingCheckInDate,
             @Param("newBookingCheckOutDate") LocalDate newBookingCheckOutDate,
             @Param("excludedBookingId") Long excludedBookingId
+    );
+
+    @Query(value = "SELECT b.* FROM bookings b " +
+           "JOIN beds bed ON b.bed_id = bed.id " +
+           "JOIN rooms r ON bed.room_id = r.id " +
+           "WHERE (:guestHouseId IS NULL OR r.guest_house_id = :guestHouseId) " +
+           "AND (:roomType IS NULL OR r.room_type = :roomType) " +
+           "AND (:checkInDate IS NULL OR b.booking_date >= :checkInDate) " +
+           "AND (:checkOutDate IS NULL OR DATE_ADD(b.booking_date, INTERVAL b.duration_days DAY) <= :checkOutDate) " +
+           "AND (:status IS NULL OR b.status = :status)", 
+           nativeQuery = true)
+    List<Booking> findFilteredBookings(
+        @Param("guestHouseId") Long guestHouseId,
+        @Param("roomType") String roomType,
+        @Param("checkInDate") LocalDate checkInDate,
+        @Param("checkOutDate") LocalDate checkOutDate,
+        @Param("status") String status
     );
 }

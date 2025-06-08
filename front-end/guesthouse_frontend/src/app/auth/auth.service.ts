@@ -79,7 +79,7 @@ export class AuthService {
   getRoleFromToken(): string | null { // <--- Removed 'token: string' argument
     const decoded = this.getDecodedToken();
     if (decoded && decoded.role) { // Assuming 'role' is the claim name in your JWT
-      return decoded.role;
+      return decoded.role.toUpperCase(); // Always return role in uppercase
     }
     return null;
   }
@@ -112,7 +112,10 @@ export class AuthService {
       if (decoded.exp) {
         const expirationDate = new Date(0);
         expirationDate.setUTCSeconds(decoded.exp);
-        return expirationDate.valueOf() < new Date().valueOf();
+        // Add a 5-minute buffer to handle clock skew
+        const now = new Date();
+        const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+        return expirationDate.valueOf() < fiveMinutesFromNow.valueOf();
       }
       return false;
     } catch (error) {
@@ -131,6 +134,7 @@ export class AuthService {
     this._userRole.next(null);
     // --- END NEW ---
     console.log('User logged out. Token removed from localStorage.');
+    this.router.navigate(['/auth/login']);
   }
 
   // --- NEW: Helper method to check if user is logged in (optional but useful) ---
@@ -141,15 +145,29 @@ export class AuthService {
 
   // --- NEW: Helper method to check if current user is admin ---
   isAdminUser(): boolean {
-    return this.getRoleFromToken() === 'admin';
+    const role = this.getRoleFromToken();
+    return role === 'ADMIN';
   }
 
   // --- NEW: Helper method to check if current user is a regular user ---
   isRegularUser(): boolean {
-    return this.getRoleFromToken() === 'user';
+    const role = this.getRoleFromToken();
+    return role === 'USER';
   }
 
-    getCurrentUserRole(): string | null {
+  hasAdminAccess(): boolean {
+    const token = this.getToken();
+    if (!token || this.isTokenExpired(token)) {
+      return false;
+    }
+    return this.isAdminUser();
+  }
+
+  getCurrentUserRole(): string | null {
     return this._userRole.getValue();
+  }
+
+  private getRoleWithPrefix(role: string): string {
+    return `ROLE_${role}`;
   }
 }

@@ -161,11 +161,6 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getDashboardStats());
     }
 
-    @GetMapping("/dashboard/scheduler")
-    public ResponseEntity<List<BookingDTO>> getSchedulerData(@RequestParam String start, @RequestParam String end) {
-        return ResponseEntity.ok(adminService.getSchedulerData(start, end));
-    }
-
     @GetMapping("/dashboard/total-beds")
     public ResponseEntity<Integer> getTotalBeds(
             @RequestParam(required = false) String start,

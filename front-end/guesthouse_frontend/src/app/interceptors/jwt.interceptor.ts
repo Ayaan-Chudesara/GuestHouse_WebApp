@@ -4,35 +4,71 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const token = localStorage.getItem('jwt_token'); // Or 'token', depending on your AuthService.saveToken
+    const token = localStorage.getItem('jwt_token');
+    const isApiRequest = request.url.startsWith('http://localhost:8080/api/');
+    const isAuthRequest = request.url.includes('/api/auth/');
 
-    // Define the login URL to explicitly exclude it from token addition
-    const loginUrl = 'http://localhost:8080/api/auth/login'; // Make sure this matches your login endpoint
+    // Only add token for API requests that are not auth requests
+    if (token && isApiRequest && !isAuthRequest) {
+      // Check if token is expired before making the request
+      if (this.authService.isTokenExpired(token)) {
+        console.log('JWT Interceptor: Token is expired, redirecting to login');
+        this.authService.logout();
+        this.router.navigate(['/auth/login']);
+        return throwError(() => new Error('Token expired'));
+      }
 
-    // Check if a token exists AND if the request is NOT the login request AND if it's to your backend API
-    if (token && request.url.startsWith('http://localhost:8080/api/') && !request.url.includes(loginUrl)) {
-      // Clone the request and add the Authorization header
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log('JWT Interceptor: Token attached to request', request.url);
+      console.log('JWT Interceptor: Token attached to request', {
+        url: request.url,
+        method: request.method,
+        headers: request.headers.has('Authorization') ? 'Authorization header present' : 'No Authorization header'
+      });
     } else {
-      // This will log for the login request, or any request without a token, or non-backend requests
-      console.log('JWT Interceptor: No token attached (either no token, not an API request requiring auth, or it\'s the login request)', request.url);
+      console.log('JWT Interceptor: No token attached for request:', {
+        url: request.url,
+        method: request.method,
+        tokenExists: !!token,
+        isApiRequest,
+        isAuthRequest
+      });
     }
 
-    return next.handle(request);
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          // Unauthorized - token is invalid or expired
+          console.log('JWT Interceptor: Unauthorized error (401)');
+          this.authService.logout();
+          this.router.navigate(['/auth/login']);
+          return throwError(() => new Error('Session expired. Please log in again.'));
+        } else if (error.status === 403) {
+          // Forbidden - user doesn't have required permissions
+          console.log('JWT Interceptor: Forbidden error (403)');
+          return throwError(() => new Error('Insufficient permissions'));
+        }
+        
+        // For other errors, just pass them through
+        return throwError(() => error);
+      })
+    );
   }
 }
