@@ -99,7 +99,7 @@ export class AdminReservationsService {
 
   updateBookingStatusGeneric(bookingId: number, newStatus: BookingStatus): Observable<Booking> {
     // Backend returns BookingDTO for this endpoint
-    return this.http.put<Booking>(`${this.adminApiUrl}/bookings/${bookingId}/status`, { status: newStatus }, {
+    return this.http.post<Booking>(`${this.adminApiUrl}/bookings/${bookingId}/updateStatus/${newStatus}`, {}, {
       headers: this.getAuthHeaders()
     }).pipe(catchError(this.handleError));
   }
