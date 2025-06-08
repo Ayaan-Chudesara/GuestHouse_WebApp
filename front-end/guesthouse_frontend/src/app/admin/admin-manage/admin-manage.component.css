@@ -208,3 +208,42 @@ p {
 .manage-container section:not(:last-child) {
   margin-bottom: 40px; /* More space between sections */
 }
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  td, th {
+    min-width: 100px; /* Ensure columns don't get too narrow */
+  }
+
+  td:last-child {
+    min-width: 120px; /* More space for action buttons */
+  }
+
+  .management-section {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  button {
+    padding: 8px 15px;
+    margin-bottom: 10px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .manage-container {
+    padding: 10px;
+  }
+
+  td, th {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+}
